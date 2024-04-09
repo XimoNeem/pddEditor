@@ -1,0 +1,4 @@
+repository "PDDEditor@Proftech@cloud"
+  path "/"
+    br "/main"
+    co "/main"
