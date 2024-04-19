@@ -1,22 +1,19 @@
 using UnityEngine;
 using PDDEditor.UI;
+using System.Diagnostics.Tracing;
 
+[System.Serializable]
 public class Test : MonoBehaviour
 {
-    public string Tes = "sfgdhf";
-    private void OnMouseEnter()
+    public ColorSetting color;
+
+    private void FixedUpdate()
     {
-        Context.Instance.UIDrawer.ShowHint(Tes);
+        color.Value = Color.red;
     }
 
-    private void OnMouseExit()
+    private void Update()
     {
-        Context.Instance.UIDrawer.HideHint();
-        Context.Instance.EventManager.OnSceneLoaded.Invoke();
-    }
-
-    private void OnMouseDown()
-    {
-        Context.Instance.AssetLoader.LoadAsset(PDDEditorWindows.ObjectSettings);
+        if(Input.GetKey(KeyCode.G)) { color.Value = Color.blue; }
     }
 }

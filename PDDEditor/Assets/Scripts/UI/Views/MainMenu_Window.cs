@@ -6,6 +6,9 @@ using PDDEditor.SceneManagment;
 public class MainMenu_Window : WindowController
 {
     [SerializeField] private Button _loadButton;
+    [SerializeField] private Button _scenesListButton;
+    [SerializeField] private Button _SettingsButton;
+    [SerializeField] private Button _exitButton;
 
     private void Awake()
     {
@@ -19,5 +22,7 @@ public class MainMenu_Window : WindowController
                 Context.Instance.AssetLoader.LoadAsset(PDDEditorWindows.MainButtomBar);
             }
         );
+
+        _exitButton.onClick.AddListener( delegate { Application.Quit(); } );
     }
 }

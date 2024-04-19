@@ -1,9 +1,6 @@
 using PDDEditor.UI;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 

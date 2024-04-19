@@ -11,6 +11,7 @@ public class Node : MonoBehaviour
         FindObjectOfType<RuntimeHandle.RuntimeTransformHandle>().SetTarget(this.gameObject);
 
         Context.Instance.EventManager.OnNodeSelected.Invoke(this);
+        Item.Set();
     }
 
     private void OnMouseEnter()

@@ -3,10 +3,6 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Collections.Generic;
-using Unity.Properties;
-using UnityEngine.Rendering;
-using System.Threading.Tasks;
-using UnityEditor.Experimental.GraphView;
 using PDDEditor.UI;
 
 public class ObjectSettings_Window : WindowController
@@ -20,6 +16,7 @@ public class ObjectSettings_Window : WindowController
     [SerializeField] private Button _changeModelButton;
 
     [SerializeField] private ToggleSetting_Ticket _toggleTemplate;
+    [SerializeField] private ColorSetting_Ticket _colorTemplate;
 
     private List<Ticket> createdTickets;
 
@@ -51,7 +48,6 @@ public class ObjectSettings_Window : WindowController
 
         if (values[0].GetType() != typeof(Node)) { Debug.LogError("Need object of type <Node> for initialization"); return; }
 
-        Debug.Log("Init with params");
         Initialize((Node)values[0]);
 
     }
@@ -93,7 +89,6 @@ public class ObjectSettings_Window : WindowController
     {
         foreach (var item in createdTickets)
         {
-            Debug.Log(item);
             Destroy(item.gameObject);
         }
 
@@ -104,18 +99,37 @@ public class ObjectSettings_Window : WindowController
     {
         ClearSettings();
 
-        for (int i = 0; i < _currentNode.Item.Settings.Length; i++)
+        for (int i = 0; i < _currentNode.Item.ToggleSettings.Length; i++)
         {
             ToggleSetting_Ticket ticket = Instantiate(_toggleTemplate, _content);
-            ticket.NameText.text = _currentNode.Item.Settings[i].Name;
-            ticket.Toggle.isOn = _currentNode.Item.Settings[i].Value;
-            int id = _currentNode.Item.Settings[i].ID;
+            ticket.NameText.text = _currentNode.Item.ToggleSettings[i].Name;
+            ticket.Toggle.isOn = _currentNode.Item.ToggleSettings[i].Value;
+            int id = _currentNode.Item.ToggleSettings[i].ID;
 
             ticket.Toggle.onValueChanged.AddListener(delegate
             {
-                _currentNode.Item.Settings[id].Value = ticket.Toggle.isOn;
-                _currentNode.Item.Settings[id].Set();
+                _currentNode.Item.ToggleSettings[id].Value = ticket.Toggle.isOn;
+                _currentNode.Item.ToggleSettings[id].Set();
             });
+
+            createdTickets.Add(ticket);
+        }
+
+        for (int i = 0; i < _currentNode.Item.ColorSettings.Length; i++)
+        {
+            ColorSetting_Ticket ticket = Instantiate(_colorTemplate, _content);
+            ticket.NameText.text = _currentNode.Item.ColorSettings[i].Name;
+            ticket.ColorButton.image.color = _currentNode.Item.ColorSettings[i].Value;
+            int id = _currentNode.Item.ColorSettings[i].ID;
+            ticket.Item = _currentNode.Item;
+            ticket.ColorSettingID = id;
+
+
+            ticket.ColorButton.onClick.AddListener(delegate
+                    {
+                        ticket.RequestColor();
+                    }
+                );
 
             createdTickets.Add(ticket);
         }

@@ -637,18 +637,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: test vehicle
   Type: 5
-  Settings:
-  - name: test1
+  ToggleSettings:
+  - name: Test1
     ToggledObjects:
     - {fileID: 954397175391574624}
     Value: 1
-  - name: test2
+  - name: Test2
     ToggledObjects:
     - {fileID: 5150619193691078510}
     Value: 0
-  - name: adsg
-    ToggledObjects: []
-    Value: 0
+  ColorSettings:
+  - name: CorpusColor
+    Value: {r: 1, g: 0.38679236, b: 0.80653137, a: 1}
+    ToggledObjects:
+    - {fileID: 8865045769082398786}
+    - {fileID: 286952772735713605}
+  - name: testColor
+    Value: {r: 0, g: 0, b: 1, a: 1}
+    ToggledObjects:
+    - {fileID: 5837433150390958748}
 --- !u!1 &2271241171861734071
 GameObject:
   m_ObjectHideFlags: 0

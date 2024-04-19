@@ -4615,6 +4615,8 @@ MonoBehaviour:
   _changeModelButton: {fileID: 5968579319909699928}
   _toggleTemplate: {fileID: 8242697588063462635, guid: 816eafafc8a747b48804895aadeac66b,
     type: 3}
+  _colorTemplate: {fileID: 4015756957551151603, guid: 8c7382b70ba8eff4895124ecca5b8150,
+    type: 3}
 --- !u!1 &6415416843138163896
 GameObject:
   m_ObjectHideFlags: 0

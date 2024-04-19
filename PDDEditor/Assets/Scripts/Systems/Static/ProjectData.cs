@@ -21,6 +21,7 @@ namespace PDDEditor
             public const string ObjectSettings = "Assets/Prefabs/UI/ObjectSettings.prefab";
             public const string ScreenShot = "Assets/Prefabs/UI/ScreenShotWindow.prefab";
             public const string FilePicker = "Assets/Prefabs/UI/FilePicker.prefab";
+            public const string ColorPicker = "ColorPicker";
         }
     }
 

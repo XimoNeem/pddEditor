@@ -33,12 +33,9 @@ public class ObjectItem_Ticket : Ticket
 
     private void OnSelect()
     {
-        Debug.Log("Ckicked");
         if (OnSelectedAction != null)
         {
-            Debug.Log(OnSelectedAction);
             OnSelectedAction.Invoke(Item);
-            Debug.Log("Invoked");
         }
     }
 }

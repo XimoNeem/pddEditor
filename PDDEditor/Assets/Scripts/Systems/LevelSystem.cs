@@ -6,7 +6,6 @@ public class LevelSystem : MonoBehaviour
 {
     public void CreateObject(PDDItem item)
     {
-        Debug.Log("Creation task created");
         Node node = Instantiate(Resources.Load<Node>("Node"));
 
         node.gameObject.name = item.name;
@@ -22,8 +21,6 @@ public class LevelSystem : MonoBehaviour
     {
         Action<PDDItem> action = CreateObject;
         Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.ItemsList, action);
-        Debug.Log(action);
-        Debug.Log("Creation task created");
     }
 
     private void OnEnable()
