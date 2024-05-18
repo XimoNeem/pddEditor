@@ -6,6 +6,8 @@ using TMPro;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.IO;
+using PDDEditor.UI;
+using System;
 
 public class ScreenShot_Window : WindowController
 {
@@ -70,7 +72,8 @@ public class ScreenShot_Window : WindowController
 
     private void SelectPath()
     {
-        Context.Instance.EventManager.OnFileRequest.Invoke(FileType.Dir, SetPath);
+        Action<FileSystemInfo> action = SetPath;
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.FilePicker, action, FileType.Dir);
     }
 
     private void SetPath(string path)

@@ -15,6 +15,8 @@ public class LocalAssetProvider : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
+
+        FindObjectOfType<UIDrawer>()._loadedProviders.Add(this); //TODO переписать
     }
 
     public void LoadAsset(string key, Action<AsyncOperationHandle<GameObject>> callback)
@@ -26,6 +28,9 @@ public class LocalAssetProvider : MonoBehaviour
 
     public void Unload()
     {
+        //FindObjectOfType<UIDrawer>()._loadedProviders.Remove(this); //TODO переписать
+
+        Debug.Log($"Unload {this.name}");
         Addressables.Release(_operation);
         Destroy(this.gameObject);
     }

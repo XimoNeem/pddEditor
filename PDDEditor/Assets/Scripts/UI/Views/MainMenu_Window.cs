@@ -8,6 +8,7 @@ public class MainMenu_Window : WindowController
     [SerializeField] private Button _loadButton;
     [SerializeField] private Button _scenesListButton;
     [SerializeField] private Button _SettingsButton;
+    [SerializeField] private Button _importButton;
     [SerializeField] private Button _exitButton;
 
     private void Awake()
@@ -24,5 +25,11 @@ public class MainMenu_Window : WindowController
         );
 
         _exitButton.onClick.AddListener( delegate { Application.Quit(); } );
+        _importButton.onClick.AddListener( delegate 
+        {
+            Context.Instance.AssetLoader.LoadAsset(PDDEditorWindows.ImportPreview);
+            AssetContainer.Unload();
+        } 
+        );
     }
 }

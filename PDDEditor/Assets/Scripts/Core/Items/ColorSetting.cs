@@ -15,8 +15,6 @@ public struct ColorSetting: IItemSetting
 
     public void Set()
     {
-        Debug.Log(ID);
-        Debug.Log(this.GetHashCode());
         foreach (var item in ToggledObjects)
         {
             foreach (var material in item.materials)

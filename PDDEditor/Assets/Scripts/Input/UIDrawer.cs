@@ -1,6 +1,8 @@
 using PDDEditor.UI;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
@@ -13,27 +15,26 @@ public class UIDrawer : MonoBehaviour
     private bool _showHint = false;
     private string _hintText;
 
-    private FileType _currentFileType;
-    private Action<FileSystemInfo> _filePickerCallBack;
 
     private object[] _cachedValues;
-    
+
+    public List<LocalAssetProvider> _loadedProviders;
+
 
     private void OnEnable()
     {
+        _loadedProviders = new List<LocalAssetProvider>();
         Context.Instance.EventManager.OnNodeSelected.AddListener(ShowSettingsWindow);
-        Context.Instance.EventManager.OnFileRequest.AddListener(ShowFilePicker);
     }
 
     private void OnDisable()
     {
         Context.Instance.EventManager.OnNodeSelected.RemoveListener(ShowSettingsWindow);
-        Context.Instance.EventManager.OnFileRequest.RemoveListener(ShowFilePicker);
     }
 
     public void ShowWindow(string name, params object[] values)
     {
-        LocalAssetProvider provider = Context.Instance.AssetLoader.LoadAsset(name, InitializeWindow);   
+        LocalAssetProvider provider = Context.Instance.AssetLoader.LoadAsset(name, InitializeWindow);
         _cachedValues = values;
     }
 
@@ -45,6 +46,26 @@ public class UIDrawer : MonoBehaviour
 
         }
         else { Debug.LogError("Loaded assets must be typeof <LoadedAsset>"); }
+    }
+
+    public void UnloadAllWindows()
+    {
+        for (int i = 0; i < _loadedProviders.Count; i++)
+        {
+            Debug.Log(i);
+            if (_loadedProviders[i] != null)
+            {
+                try
+                {
+                    _loadedProviders[i].Unload();
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
+        _loadedProviders.Clear();
     }
 
     public void ShowHint(string text)
@@ -68,19 +89,6 @@ public class UIDrawer : MonoBehaviour
         Context.Instance.EventManager.OnNodeSettings.Invoke(node);
     }
 
-    private void ShowFilePicker(FileType type, Action<FileSystemInfo> callBack)
-    {
-        LocalAssetProvider asset = Context.Instance.AssetLoader.LoadAsset(PDDEditorWindows.FilePicker, InitializeFilePicker);
-
-        _currentFileType = type;
-        _filePickerCallBack = callBack;
-    }
-
-    private void InitializeFilePicker(AsyncOperationHandle<GameObject> item)
-    {
-        FilePicker_Window picker = item.Result.GetComponent<FilePicker_Window>();
-        picker.Initialize(_currentFileType, _filePickerCallBack);
-    }
 
     private void OnGUI()
     {

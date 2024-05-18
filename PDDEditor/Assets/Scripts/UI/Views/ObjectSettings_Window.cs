@@ -4,6 +4,7 @@ using TMPro;
 using System;
 using System.Collections.Generic;
 using PDDEditor.UI;
+using Unity.VisualScripting;
 
 public class ObjectSettings_Window : WindowController
 {
@@ -17,6 +18,7 @@ public class ObjectSettings_Window : WindowController
 
     [SerializeField] private ToggleSetting_Ticket _toggleTemplate;
     [SerializeField] private ColorSetting_Ticket _colorTemplate;
+    [SerializeField] private EmmiterSetting_Ticket _emmiterTemplate;
 
     private List<Ticket> createdTickets;
 
@@ -130,6 +132,33 @@ public class ObjectSettings_Window : WindowController
                         ticket.RequestColor();
                     }
                 );
+
+            createdTickets.Add(ticket);
+        }
+
+        for (int i = 0; i < _currentNode.Item.EmmiterSettings.Length; i++)
+        {
+            EmmiterSetting_Ticket ticket = Instantiate(_emmiterTemplate, _content);
+            ticket.NameText.text = _currentNode.Item.EmmiterSettings[i].Name;
+
+            for (int x = 0; x < _currentNode.Item.EmmiterSettings[i].EmmiterObjects.Length; x++)
+            {
+                GameObject newTicket = Instantiate(ticket.ItemTemplate, ticket.ItemsParent);
+                newTicket.SetActive(true);
+                TMP_Text text = newTicket.GetComponentInChildren<TMP_Text>();
+                Toggle toggle = newTicket.GetComponentInChildren<Toggle>();
+
+                text.text = _currentNode.Item.EmmiterSettings[i].EmmiterObjects[x].Name;
+                toggle.isOn = _currentNode.Item.EmmiterSettings[i].EmmiterObjects[x].Value;
+
+                int id = _currentNode.Item.EmmiterSettings[i].ID;
+                int objectId = x;
+
+                toggle.onValueChanged.AddListener(delegate {
+                    _currentNode.Item.EmmiterSettings[id].EmmiterObjects[objectId].Value = toggle.isOn;
+                    _currentNode.Item.Set();
+                });
+            }
 
             createdTickets.Add(ticket);
         }

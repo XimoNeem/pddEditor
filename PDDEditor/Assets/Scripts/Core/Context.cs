@@ -8,6 +8,7 @@ public class Context : MonoBehaviour
 {
     public static Context Instance;
 
+    public AssetRegister AssetRegister;
     public UIDrawer UIDrawer;
     public EventManager EventManager;
     public SceneLoader SceneLoader;
@@ -37,6 +38,7 @@ public class Context : MonoBehaviour
         InputSystem = this.AddComponent<InputSystem>();
         AssetLoader = this.AddComponent<LocalAssetLoader>();
         LevelSystem = this.AddComponent<LevelSystem>();
+        AssetRegister = this.AddComponent<AssetRegister>();
 
         Debug.Log("Context initialized");
 

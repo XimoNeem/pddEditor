@@ -4617,6 +4617,8 @@ MonoBehaviour:
     type: 3}
   _colorTemplate: {fileID: 4015756957551151603, guid: 8c7382b70ba8eff4895124ecca5b8150,
     type: 3}
+  _emmiterTemplate: {fileID: 5142211024060113295, guid: 55c943c4155ced646a7fe8fe905104e6,
+    type: 3}
 --- !u!1 &6415416843138163896
 GameObject:
   m_ObjectHideFlags: 0

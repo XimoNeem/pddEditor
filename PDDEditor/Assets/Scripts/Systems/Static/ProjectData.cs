@@ -1,4 +1,6 @@
 
+using UnityEngine;
+
 namespace PDDEditor
 {
     namespace SceneManagment 
@@ -22,6 +24,9 @@ namespace PDDEditor
             public const string ScreenShot = "Assets/Prefabs/UI/ScreenShotWindow.prefab";
             public const string FilePicker = "Assets/Prefabs/UI/FilePicker.prefab";
             public const string ColorPicker = "ColorPicker";
+            public const string ImportPreview = "ImportPreview";
+            public const string SceneSettings = "SceneSettings";
+            public const string EditorSettings = "EditorSettings";
         }
     }
 
@@ -30,6 +35,7 @@ namespace PDDEditor
         public static class PDDItems
         {
             public const string Node = "Assets/Prefabs/Node.prefab";
+            public const string AssetsPath = "/CustomData";
         }
     }
 

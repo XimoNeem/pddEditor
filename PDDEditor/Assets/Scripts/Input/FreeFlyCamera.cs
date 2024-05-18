@@ -14,7 +14,7 @@ public class FreeFlyCamera : MonoBehaviour
     private bool _enableRotation = true;
 
     [SerializeField]
-    private float _mouseSense = 1.8f;
+    public float _mouseSense = 1.8f;
 
     [Space]
 

@@ -93,7 +93,7 @@ MonoBehaviour:
     m_Value: 0
   m_CloudPreset:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 4
   cumulusMap:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -238,7 +238,7 @@ MonoBehaviour:
     m_Value: 0.5
   densityMultiplier:
     m_OverrideState: 1
-    m_Value: 0.4
+    m_Value: 0.45
   shapeFactor:
     m_OverrideState: 1
     m_Value: 0.9
@@ -512,7 +512,7 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 1
   colorMode:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
   color:
     m_OverrideState: 0
@@ -533,14 +533,14 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 1000
   baseHeight:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   maximumHeight:
     m_OverrideState: 0
-    m_Value: 50
+    m_Value: 331.8
   meanFreePath:
     m_OverrideState: 0
-    m_Value: 400
+    m_Value: 86.38
   enableVolumetricFog:
     m_OverrideState: 1
     m_Value: 1

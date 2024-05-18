@@ -19,6 +19,7 @@ public class FilePicker_Window : WindowController
     private DirectoryInfo _currentDirectory;
 
     private bool _showFiles;
+    private string _fileType;
     private Action<FileSystemInfo> _callback;
 
     public override void OnEnable()
@@ -28,16 +29,26 @@ public class FilePicker_Window : WindowController
         _selectButton.onClick.AddListener(SelectFolder);
     }
 
-    public void Initialize(FileType type, Action<FileSystemInfo> callback)
+    public override void Initialize(params object[] values)
     {
-        _callback = callback;
-        switch (type) 
+        base.Initialize(values);
+
+        if (values[0].GetType() != typeof(Action<FileSystemInfo>)) { Debug.LogError("Need object of type <Action<Color>> for initialization"); return; }
+
+        _callback = (Action<FileSystemInfo>)values[0];
+        FileType type = (FileType)values[1];
+
+        switch (type)
         {
             case FileType.Dir:
                 _showFiles = false;
                 break;
             case FileType.All:
                 _showFiles = true;
+                break;
+            case FileType.PDDAsset:
+                _showFiles = true;
+                _fileType = ".pddasset";
                 break;
         }
     }
@@ -76,7 +87,10 @@ public class FilePicker_Window : WindowController
 
         foreach (FileInfo file in files)
         {
-            AddFileTicket(file);
+            if (file.Name.EndsWith(_fileType))
+            {
+                AddFileTicket(file);
+            }
         }
     }
 
@@ -91,6 +105,12 @@ public class FilePicker_Window : WindowController
     {
         File_Ticket newItem = Instantiate(_fileTicket, _contentParent);
         newItem.Name.text = file.Name;
+
+        if (_showFiles)
+        {
+            newItem.Button.onClick.AddListener(delegate { _callback.Invoke(file); } );
+            newItem.Button.onClick.AddListener(delegate { AssetContainer.Unload(); } );
+        }
     }
 
     private void MoveUp()
@@ -111,5 +131,6 @@ public class FilePicker_Window : WindowController
 public enum FileType
 {
     Dir,
-    All
+    All,
+    PDDAsset
 }

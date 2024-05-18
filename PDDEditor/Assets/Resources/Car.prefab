@@ -656,6 +656,22 @@ MonoBehaviour:
     Value: {r: 0, g: 0, b: 1, a: 1}
     ToggledObjects:
     - {fileID: 5837433150390958748}
+  EmmiterSettings:
+  - name: BAckPlate
+    EmmiterObjects:
+    - Name: Test
+      Color: 0
+      Value: 0
+    - Name: Testg
+      Color: 1
+      Value: 1
+    - Name: "\u0442\u0435\u0441\u0442"
+      Color: 2
+      Value: 1
+    - Name: "\u0430\u043B\u044C\u0444\u0430"
+      Color: 3
+      Value: 0
+    EmmiterRenderer: {fileID: 6306307706904924107}
 --- !u!1 &2271241171861734071
 GameObject:
   m_ObjectHideFlags: 0
