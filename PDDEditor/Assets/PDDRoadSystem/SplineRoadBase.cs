@@ -28,6 +28,15 @@ public class SplineRoadBase : MonoBehaviour
         p2 = position + (-right * width);
     }
 
+    public void SampleSplineBorder(int splineIndex, float t, float width, out Vector3 point, out Vector3 rightDirection)
+    {
+        SplineContainer.Evaluate(splineIndex, t, out float3 position, out float3 frwrd, out float3 upVector);
+
+        float3 right = Vector3.Cross(frwrd, upVector).normalized;
+        point = position + (right * width);
+        rightDirection = right;
+    }
+
     public void FixRotation()
     {
         foreach (Spline item in SplineContainer.Splines)
