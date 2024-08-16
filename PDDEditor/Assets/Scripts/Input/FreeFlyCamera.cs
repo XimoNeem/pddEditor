@@ -13,8 +13,7 @@ public class FreeFlyCamera : MonoBehaviour
     [SerializeField]
     private bool _enableRotation = true;
 
-    [SerializeField]
-    public float _mouseSense = 1.8f;
+    private float _mouseSense => Context.Instance.EditorBase.EditorSettings.MouseSensivity;
 
     [Space]
 
@@ -73,6 +72,7 @@ public class FreeFlyCamera : MonoBehaviour
     {
         if (_boostedSpeed < _movementSpeed)
             _boostedSpeed = _movementSpeed;
+        Debug.Log(Context.Instance.EditorBase.EditorSettings.MouseSensivity);
     }
 #endif
 

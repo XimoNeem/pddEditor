@@ -27,6 +27,7 @@ namespace PDDEditor
             public const string ImportPreview = "ImportPreview";
             public const string SceneSettings = "SceneSettings";
             public const string EditorSettings = "EditorSettings";
+            public const string DebugLayer = "DebugLayer";
         }
     }
 
@@ -83,6 +84,14 @@ namespace PDDEditor
         {
             Left,
             Right
+        }
+    }
+
+    namespace Paths
+    {
+        public static class PDDEditorPaths
+        {
+            public const string EditorSettings = "Editor/editor.json";
         }
     }
 }

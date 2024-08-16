@@ -1,7 +1,5 @@
-using PDDEditor.UI;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -66,6 +64,18 @@ public class UIDrawer : MonoBehaviour
         }
 
         _loadedProviders.Clear();
+    }
+
+    public T GetLoadedWindow<T>() where T : WindowController
+    {
+        foreach (var provider in _loadedProviders)
+        {
+            if (provider != null && provider.gameObject.GetComponentInChildren<T>())
+            {
+                return provider.gameObject.GetComponentInChildren<T>();
+            }
+        }
+        return null;
     }
 
     public void ShowHint(string text)

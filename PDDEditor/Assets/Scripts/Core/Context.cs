@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -16,6 +14,9 @@ public class Context : MonoBehaviour
     public LocalAssetLoader AssetLoader;
     public LevelSystem LevelSystem;
     public ScreenShoter ScreenShoter;
+    public DebugSystem Logger;
+/*    public PDDUtilities Utilities;*/
+    public PDDEditorContainer EditorBase;
 
 
     private void Awake()
@@ -28,11 +29,12 @@ public class Context : MonoBehaviour
 
     public void Initialize(Action Callback)
     {
-        Debug.Log("Context created");
-
         EventManager = new EventManager();
         SceneLoader = new SceneLoader();
         ScreenShoter = new ScreenShoter();
+        Logger = new DebugSystem();
+/*        Utilities = new PDDUtilities();*/
+        EditorBase = new PDDEditorContainer();
 
         UIDrawer = this.AddComponent<UIDrawer>();
         InputSystem = this.AddComponent<InputSystem>();
@@ -40,7 +42,7 @@ public class Context : MonoBehaviour
         LevelSystem = this.AddComponent<LevelSystem>();
         AssetRegister = this.AddComponent<AssetRegister>();
 
-        Debug.Log("Context initialized");
+        Context.Instance.Logger.Log("Context initialized");
 
         Callback.Invoke();
     }

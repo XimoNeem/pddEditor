@@ -202,7 +202,7 @@ Material:
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
     - _ExcludeFromTUAndAA: 0
-    - _G: 0
+    - _G: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.94868326
     - _GlossyReflections: 1

@@ -16,9 +16,11 @@ public class Loader : MonoBehaviour
         Destroy(this);
 
         Context.Instance.SceneLoader.LoadScene(PDDEditorScenes.Menu);
-        Context.Instance.AssetLoader.LoadAsset(PDDEditorWindows.MainMenu);
-        
 
-        Debug.Log("Loader destroyed");
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.DebugLayer);
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.MainMenu);
+
+
+        Context.Instance.Logger.Log("Loader destroyed");
     }
 }

@@ -87,6 +87,10 @@ namespace RuntimeHandle
 
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Q)) { type = HandleType.POSITION; }
+            if (Input.GetKeyDown(KeyCode.W)) { type = HandleType.ROTATION; }
+            if (Input.GetKeyDown(KeyCode.E)) { type = HandleType.SCALE; }
+
             if (autoScale)
                 transform.localScale =
                     Vector3.one * (Vector3.Distance(handleCamera.transform.position, transform.position) * autoScaleFactor) / 15;

@@ -11,13 +11,16 @@ public struct EmmiterSetting : IItemSetting
     public int ID { get; set; }
 
     public EmmiterObject[] EmmiterObjects;
-    public MeshRenderer EmmiterRenderer;
+    public MeshRenderer[] EmmiterRenderer;
 
     public void Set()
     {
         foreach (var item in EmmiterObjects)
         {
-            EmmiterRenderer.material.SetInt($"_{item.Color.ToString()}", Convert.ToInt32(item.Value));
+            foreach (var renderer in EmmiterRenderer)
+            {
+                renderer.material.SetInt($"_{item.Color.ToString()}", Convert.ToInt32(item.Value));
+            }
         }
     }
 

@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditorInternal;
+//using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.UI;
 using UnityEngine.Splines;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -42,8 +39,8 @@ public class SplineRoad : MonoBehaviour
         m_meshFilter = gameObject.GetComponent<MeshFilter>();
         m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
-        ComponentUtility.MoveComponentUp(this);
-        ComponentUtility.MoveComponentUp(this);
+        //ComponentUtility.MoveComponentUp(this);
+        //ComponentUtility.MoveComponentUp(this);
 
         m_width = 1;
     }
@@ -140,26 +137,11 @@ public class SplineRoad : MonoBehaviour
         m.SetTriangles(trisB, 1);
         m.SetTriangles(trisC, 2);
 
-        foreach (var item in trisC)
-        {
-            Debug.Log($"={item}");
-        }
-
         List<int> allTris = new List<int>();
         allTris.AddRange(tris);
         allTris.AddRange(trisB);
         allTris.AddRange(trisC);
 
-        for (int i = 0; i < verts.Count; i++)
-        {
-            if (!allTris.Contains(i))
-            {
-                Debug.Log($"Point {i} not found!");
-            }
-        }
-
-        Debug.Log(tris.Count + trisB.Count + trisC.Count);
-        Debug.Log(verts.Count);
 
         m.SetUVs(0, uvs);
 
@@ -294,8 +276,8 @@ public class SplineRoad : MonoBehaviour
 
     private void GetBorderVerts(List<Vector3> verts, List<int> tris, List<Vector2> uvs)
     {
-        List<Vector3> leftBorder = new List<Vector3>();
-        List<Vector3> rightBorder = new List<Vector3>();
+        List<List<Vector3>> leftBorder = new List<List<Vector3>>();
+        List<List<Vector3>> rightBorder = new List<List<Vector3>>();
 
         float step = 1f / (float)resolution;
         Vector3 point;
@@ -304,6 +286,9 @@ public class SplineRoad : MonoBehaviour
         for (int j = 0; j < roadInfos.Count; j++)
         {
             if (!roadInfos[j].DrawBorder) { continue; }
+
+            List<Vector3> borderVertsRight = new List<Vector3>(); 
+            List<Vector3> borderVertsLeft = new List<Vector3>();
 
             for (int i = 0; i < resolution; i++)
             {
@@ -318,7 +303,10 @@ public class SplineRoad : MonoBehaviour
                     newPoint += (right * roadInfos[j].BorderLength) * bt;
                     newPoint.y += roadInfos[j].BorderCurve.Evaluate(bt * 10) * 10;
 
-                    rightBorder.Add(newPoint);
+                    Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(0, roadInfos[j].Randomize), UnityEngine.Random.Range(0, roadInfos[j].Randomize), UnityEngine.Random.Range(0, roadInfos[j].Randomize));
+                    newPoint += randomOffset * bt;
+
+                    borderVertsRight.Add(newPoint);
                 }
 
                 m_splineSampler.SampleSplineBorder(j, t, -roadInfos[j].RoadWidth + roadInfos[j].BorderOffset, out point, out right);
@@ -331,7 +319,10 @@ public class SplineRoad : MonoBehaviour
                     newPoint += (-right * roadInfos[j].BorderLength) * bt;
                     newPoint.y += roadInfos[j].BorderCurve.Evaluate(bt * 10) * 10;
 
-                    leftBorder.Add(newPoint);
+                    Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(0, roadInfos[j].Randomize), UnityEngine.Random.Range(0, roadInfos[j].Randomize), UnityEngine.Random.Range(0, roadInfos[j].Randomize));
+                    newPoint += randomOffset * bt;
+
+                    borderVertsLeft.Add(newPoint);
                 }
             }
 
@@ -345,7 +336,10 @@ public class SplineRoad : MonoBehaviour
                 newPoint += (right * roadInfos[j].BorderLength) * bt;
                 newPoint.y += roadInfos[j].BorderCurve.Evaluate(bt * 10) * 10;
 
-                rightBorder.Add(newPoint);
+                Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(0, roadInfos[j].Randomize), UnityEngine.Random.Range(0, roadInfos[j].Randomize), UnityEngine.Random.Range(0, roadInfos[j].Randomize));
+                newPoint += randomOffset * bt;
+
+                borderVertsRight.Add(newPoint);
             }
 
             m_splineSampler.SampleSplineBorder(j, 1, -roadInfos[j].RoadWidth + roadInfos[j].BorderOffset, out point, out right);
@@ -358,11 +352,16 @@ public class SplineRoad : MonoBehaviour
                 newPoint += (-right * roadInfos[j].BorderLength) * bt;
                 newPoint.y += roadInfos[j].BorderCurve.Evaluate(bt * 10) * 10;
 
-                leftBorder.Add(newPoint);
+                Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(0, roadInfos[j].Randomize), UnityEngine.Random.Range(0, roadInfos[j].Randomize), UnityEngine.Random.Range(0, roadInfos[j].Randomize));
+                newPoint += randomOffset * bt;
+
+                borderVertsLeft.Add(newPoint);
             }
+
+            leftBorder.Add(borderVertsLeft);
+            rightBorder.Add(borderVertsRight);
         }
 
-        // Calculate initial vertex count for offset
         int offset = verts.Count;
         int rowLength = 100 / m_borderStep;
         rowLength = Math.Clamp(rowLength, 0, 100);
@@ -371,80 +370,97 @@ public class SplineRoad : MonoBehaviour
         int xOffset = 0;
         int yOffset = 0;
 
-        for (int i = 0; i < rightBorder.Count; i++)
+        foreach (var item in rightBorder)
         {
-            yOffset += 1;
-            uvs.Add(new Vector2(xOffset, yOffset));
-            if(yOffset > rowLength - 1)
+            xOffset = 0;
+            yOffset = 0;
+            for (int i = 0; i < item.Count; i++)
             {
-                yOffset = 0;
-                xOffset += 1;
-            }
+                uvs.Add(new Vector2(xOffset, (float)yOffset / (float)rowLength));
+                yOffset += 1;
+                if (yOffset > rowLength - 1)
+                {
+                    yOffset = 0;
+                    xOffset += 1;
+                }
 
+            }
         }
 
         xOffset = 0;
         yOffset = 0;
 
-        for (int i = 0; i < leftBorder.Count; i++)
+        foreach (var item in leftBorder)
         {
-            yOffset += 1;
-            uvs.Add(new Vector2(xOffset, yOffset));
-            if (yOffset > rowLength - 1)
+            xOffset = 0;
+            yOffset = 0;
+            for (int i = 0; i < item.Count; i++)
             {
-                yOffset = 0;
-                xOffset += 1;
+                uvs.Add(new Vector2(xOffset, (float)yOffset / (float)rowLength));
+                yOffset += 1;
+                if (yOffset > rowLength - 1)
+                {
+                    yOffset = 0;
+                    xOffset += 1;
+                }
             }
         }
 
-        for (int i = 1; i <= leftBorder.Count; i++)
+        foreach (var item in leftBorder)
         {
-            verts.Add(leftBorder[i-1]);
+            for (int i = 1; i <= item.Count; i++)
+            {
+                verts.Add(item[i - 1]);
 
-            if (i % rowLength == 0) { continue; }
-            if (i > leftBorder.Count - rowLength) { continue; }
+                if (i % rowLength == 0) { continue; }
+                if (i > item.Count - rowLength) { continue; }
 
-            int tris0 = offset + i - 1;
-            int tris1 = offset + i + rowLength - 1;
-            int tris2 = offset + i ;
+                int tris0 = offset + i - 1;
+                int tris1 = offset + i + rowLength - 1;
+                int tris2 = offset + i;
 
-            int tris3 = offset + i;
-            int tris4 = offset + i + rowLength - 1;
-            int tris5 = offset + i + rowLength;
+                int tris3 = offset + i;
+                int tris4 = offset + i + rowLength - 1;
+                int tris5 = offset + i + rowLength;
 
-            tris.Add(tris0);
-            tris.Add(tris1);
-            tris.Add(tris2);
+                tris.Add(tris0);
+                tris.Add(tris1);
+                tris.Add(tris2);
 
-            tris.Add(tris3);
-            tris.Add(tris4);
-            tris.Add(tris5);
+                tris.Add(tris3);
+                tris.Add(tris4);
+                tris.Add(tris5);
+            }
+            offset += item.Count;
         }
 
-        offset += leftBorder.Count;
 
-        for (int i = 1; i <= rightBorder.Count; i++)
+        foreach (var item in rightBorder)
         {
-            verts.Add(rightBorder[i - 1]);
+            for (int i = 1; i <= item.Count; i++)
+            {
+                verts.Add(item[i - 1]);
 
-            if (i % rowLength == 0) { continue; }
-            if (i > rightBorder.Count - rowLength) { continue; }
+                if (i % rowLength == 0) { continue; }
+                if (i > item.Count - rowLength) { continue; }
 
-            int tris0 = offset + i - 1;
-            int tris1 = offset + i + rowLength - 1;
-            int tris2 = offset + i;
+                int tris0 = offset + i - 1;
+                int tris1 = offset + i + rowLength - 1;
+                int tris2 = offset + i;
 
-            int tris3 = offset + i;
-            int tris4 = offset + i + rowLength - 1;
-            int tris5 = offset + i + rowLength;
+                int tris3 = offset + i;
+                int tris4 = offset + i + rowLength - 1;
+                int tris5 = offset + i + rowLength;
 
-            tris.Add(tris2);
-            tris.Add(tris1);
-            tris.Add(tris0);
+                tris.Add(tris2);
+                tris.Add(tris1);
+                tris.Add(tris0);
 
-            tris.Add(tris5);
-            tris.Add(tris4);
-            tris.Add(tris3);
+                tris.Add(tris5);
+                tris.Add(tris4);
+                tris.Add(tris3);
+            }
+            offset += item.Count;
         }
     }
 
@@ -512,5 +528,7 @@ public struct RoadInfo
     public bool DrawBorder;
     public float BorderLength;
     public AnimationCurve BorderCurve;
-    public float BorderOffset;
+    [Min(0)] public float BorderOffset;
+
+    [Range (0, 1)] public float Randomize;
 }

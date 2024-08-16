@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class EditorSettings_Window : WindowController
 {
@@ -16,6 +17,9 @@ public class EditorSettings_Window : WindowController
 
         _sensivitySlider.onValueChanged.AddListener(SetSensitity);
         _speedSlider.onValueChanged.AddListener(SetSpeed);
+
+        SetSensitity(Context.Instance.EditorBase.EditorSettings.MouseSensivity);
+        _sensivitySlider.SetValueWithoutNotify(Context.Instance.EditorBase.EditorSettings.MouseSensivity);
     }
 
     public override void OnDisable()
@@ -28,7 +32,8 @@ public class EditorSettings_Window : WindowController
 
     private void SetSensitity(float value)
     {
-        FindObjectOfType<FreeFlyCamera>()._mouseSense = value;
+        Context.Instance.EditorBase.EditorSettings.MouseSensivity = value;
+        Context.Instance.EditorBase.Save();
     }
 
     private void SetSpeed(float value)
