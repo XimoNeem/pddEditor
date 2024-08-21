@@ -72,7 +72,6 @@ public class FreeFlyCamera : MonoBehaviour
     {
         if (_boostedSpeed < _movementSpeed)
             _boostedSpeed = _movementSpeed;
-        Debug.Log(Context.Instance.EditorBase.EditorSettings.MouseSensivity);
     }
 #endif
 

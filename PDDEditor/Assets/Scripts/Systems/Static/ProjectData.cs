@@ -1,14 +1,29 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PDDEditor
 {
-    namespace SceneManagment 
+    namespace SceneManagment
     {
         public static class PDDEditorScenes
         {
             public const string Menu = "MainMenu";
             public const string Main = "Main";
+        }
+
+        public class PDDScene
+        {
+            public string Name;
+            public string Path;
+            public string PreviewURL;
+        }
+
+        [System.Serializable]
+        public class PDDSceneData
+        {
+            public string Name;
+            public List<Node> ItemsList;
         }
     }
 
@@ -28,15 +43,6 @@ namespace PDDEditor
             public const string SceneSettings = "SceneSettings";
             public const string EditorSettings = "EditorSettings";
             public const string DebugLayer = "DebugLayer";
-        }
-    }
-
-    namespace Items
-    {
-        public static class PDDItems
-        {
-            public const string Node = "Assets/Prefabs/Node.prefab";
-            public const string AssetsPath = "/CustomData";
         }
     }
 
@@ -92,6 +98,11 @@ namespace PDDEditor
         public static class PDDEditorPaths
         {
             public const string EditorSettings = "Editor/editor.json";
+            public const string Node = "Assets/Prefabs/Node.prefab";
+            public const string PreviewImageName = "scene.png";
+            public const string SceneDataName = "data.json";
+            public const string AssetsPath = "/PDDAssets";
+            public const string ScenesPath = "/PDDScenes";
         }
     }
 }

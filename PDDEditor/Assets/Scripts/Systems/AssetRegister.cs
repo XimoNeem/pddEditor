@@ -1,6 +1,6 @@
 using System.IO;
 using UnityEngine;
-using PDDEditor.Items;
+using PDDEditor.Paths;
 using PDDEditor.Types;
 using System;
 
@@ -10,21 +10,16 @@ public class AssetRegister : MonoBehaviour
 
     private void Start()
     {
-        _dataPath = Application.dataPath + PDDItems.AssetsPath;
+        _dataPath = Application.persistentDataPath + PDDEditorPaths.AssetsPath;
 
-        if (!Directory.Exists(_dataPath))
-        {
-             Directory.CreateDirectory(_dataPath);
-        }
+        PDDUtilities.CreateDirectoryIfNotExists(_dataPath);
         ObjectType[] elements = (ObjectType[])Enum.GetValues(typeof(ObjectType));
         string[] elementStrings = Array.ConvertAll(elements, e => e.ToString());
         foreach (var item in elementStrings)
         {
-            string path = Path.Combine(_dataPath, item);
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
+            PDDUtilities.CreateDirectoryIfNotExists(Path.Combine(_dataPath, item));
         }
+
+        Debug.Log($"Created paths {_dataPath}");
     }
 }

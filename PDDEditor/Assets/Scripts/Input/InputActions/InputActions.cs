@@ -13,6 +13,10 @@ public class InputActions : MonoBehaviour
         Context.Instance.SceneLoader.LoadScene(PDDEditorScenes.Menu);
         Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.MainMenu);
     }
+    public void SaveScene()
+    {
+        Context.Instance.LevelSystem.SaveScene();
+    }
     public void ShowSceneSettings()
     {
         Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.SceneSettings);

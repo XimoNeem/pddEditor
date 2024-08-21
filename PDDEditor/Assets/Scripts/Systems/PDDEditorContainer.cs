@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.IO;
 using UnityEngine;
 
 public class PDDEditorContainer
@@ -8,7 +9,8 @@ public class PDDEditorContainer
 
     public PDDEditorContainer()
     {
-        if (PDDUtilities.TryReadFromFile(PDDEditor.Paths.PDDEditorPaths.EditorSettings, out string json))
+        string settingsPath = Path.Combine(Application.persistentDataPath, PDDEditor.Paths.PDDEditorPaths.EditorSettings);
+        if (PDDUtilities.TryReadFromFile(settingsPath, out string json))
         {
             EditorSettings = JsonUtility.FromJson<EditorSettings>(json);
             Debug.Log("EditorSettings exists");
@@ -19,7 +21,8 @@ public class PDDEditorContainer
     public void Save()
     {
         string json = JsonUtility.ToJson(EditorSettings, true);
-        PDDUtilities.WriteTextToFile(PDDEditor.Paths.PDDEditorPaths.EditorSettings, json);
+        string settingsPath = Path.Combine(Application.persistentDataPath, PDDEditor.Paths.PDDEditorPaths.EditorSettings);
+        PDDUtilities.WriteTextToFile(settingsPath, json);
     }
 }
 

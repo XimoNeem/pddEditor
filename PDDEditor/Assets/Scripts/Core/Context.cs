@@ -6,7 +6,6 @@ public class Context : MonoBehaviour
 {
     public static Context Instance;
 
-    public AssetRegister AssetRegister;
     public UIDrawer UIDrawer;
     public EventManager EventManager;
     public SceneLoader SceneLoader;
@@ -17,6 +16,7 @@ public class Context : MonoBehaviour
     public DebugSystem Logger;
 /*    public PDDUtilities Utilities;*/
     public PDDEditorContainer EditorBase;
+    public AssetRegister AssetRegister;
 
 
     private void Awake()

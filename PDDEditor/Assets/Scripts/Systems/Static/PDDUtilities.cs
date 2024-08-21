@@ -21,6 +21,29 @@ public static class PDDUtilities
         }
     }
 
+    /// <summary>
+    /// returned True = just created
+    /// </summary>
+    /// <param name="path"></param>
+    public static bool CreateDirectoryIfNotExists(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            try
+            {
+                Directory.CreateDirectory(path);
+                Debug.Log($"Created {path}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Context.Instance.Logger.LogError("Error creating directory: " + ex.Message);
+                return false;
+            }
+        }
+        return false;
+    }
+
     public static void WriteTextToFile(string path, string text)
     {
         EnsureDirectoryExists(path);
@@ -37,6 +60,7 @@ public static class PDDUtilities
 
     public static bool TryReadFromFile(string path, out string content)
     {
+        EnsureDirectoryExists(path);
         content = null;
         try
         {

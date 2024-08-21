@@ -18,7 +18,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2000875319814995926, guid: c23d318d36bb28c4fbf7f2ff89140878,
           type: 3}
         m_TargetAssemblyTypeName: InputActions, Assembly-CSharp
-        m_MethodName: ExitToMain
+        m_MethodName: SaveScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -28,5 +28,5 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  ButtonPath: Scene/Exit
+  ButtonPath: Scene/Save
   KeyCodes: 

@@ -10,22 +10,31 @@ public class DebugSystem
 
     public void Log(string message)
     {
-        DebugLayer_Window logger = Context.Instance.UIDrawer.GetLoadedWindow<DebugLayer_Window>();
+        if (Context.Instance.UIDrawer != null)
+        { 
+            DebugLayer_Window logger = Context.Instance.UIDrawer.GetLoadedWindow<DebugLayer_Window>();
+            if (logger != null) { logger.LogMessage(message, Color.green); }
+        }
         Debug.Log($"Logger : {message}");
-        if (logger != null) { logger.LogMessage(message, Color.green); }
     }
 
     public void LogError(string message)
     {
-        DebugLayer_Window logger = Context.Instance.UIDrawer.GetLoadedWindow<DebugLayer_Window>();
+        if (Context.Instance.UIDrawer != null)
+        {
+            DebugLayer_Window logger = Context.Instance.UIDrawer.GetLoadedWindow<DebugLayer_Window>();
+            if (logger != null) { logger.LogMessage(message, Color.red); }
+        }
         Debug.Log($"Logger : {message}");
-        if (logger != null) { logger.LogMessage(message, Color.red); }
     }
 
     public void LogWarning(string message)
     {
-        DebugLayer_Window logger = Context.Instance.UIDrawer.GetLoadedWindow<DebugLayer_Window>();
+        if (Context.Instance.UIDrawer != null)
+        {
+            DebugLayer_Window logger = Context.Instance.UIDrawer.GetLoadedWindow<DebugLayer_Window>();
+            if (logger != null) { logger.LogMessage(message, Color.yellow); }
+        }
         Debug.Log($"Logger : {message}");
-        if (logger != null) { logger.LogMessage(message, Color.yellow); }
     }
 }
