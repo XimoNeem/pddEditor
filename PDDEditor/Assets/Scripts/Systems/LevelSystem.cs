@@ -5,13 +5,17 @@ using PDDEditor.SceneManagment;
 using PDDEditor.Paths;
 using System.Collections.Generic;
 using System.IO;
+using PDDEditor.Assets;
+using UnityEditor;
 
 public class LevelSystem : MonoBehaviour
 {
+    private SceneInfo _sceneInfo;
+    private LoadingHelper _loader;
+
     private string _scenesPath;
 
-    private string _currentName = "testt22222t";
-    private List<Node> _items = new List<Node>();
+    [SerializeField] private List<Node> _items = new List<Node>();
 
     private void Start()
     {
@@ -29,11 +33,56 @@ public class LevelSystem : MonoBehaviour
         node.Item = Instantiate(item, node.transform);
 
         FindObjectOfType<RuntimeHandle.RuntimeTransformHandle>().SetTarget(node.gameObject);
+
+        _items.Add(node);
+    }
+
+    public void DeleteObject(Node node)
+    {
+        if (_items.Contains(node))
+        {
+            _items.Remove(node);
+            Destroy(node.gameObject);
+        }
+    }
+
+    public void DublicateObject(Node node)
+    {
+        if (_items.Contains(node))
+        {
+            _items.Remove(node);
+            Node copy = Instantiate(node);
+            _items.Add(copy);
+        }
+    }
+
+    public void CreateNewScene()
+    {
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.PopupWindow, new PopupHeader("Выберите название для сцены:"), new PopupInput("Название сцены", OnSceneNameInput));
+    }
+
+    private void OnSceneNameInput(string name)
+    {
+        foreach (var item in GetAllScenes())
+        {
+            if (item.Name == name)
+            {
+                Context.Instance.Logger.Log("Scene name {name} is already exists");
+                return;
+            }
+        }
+
+        Context.Instance.SceneLoader.LoadScene(PDDEditorScenes.Main);
+        Context.Instance.UIDrawer.UnloadAllWindows();
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.MainTopBar);
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.MainButtomBar);
+
+        _sceneInfo = new SceneInfo(name);
     }
 
     public void RequestObject()
     {
-        Action<PDDItem> action = CreateObject;
+        Action<string> action = Context.Instance.AssetRegister.LoadAsset;
         Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.ItemsList, action);
     }
 
@@ -90,21 +139,32 @@ public class LevelSystem : MonoBehaviour
 
     public void SaveScene(Texture2D preview)
     {
-        SaveScene(_currentName, _items, preview);
+        if (_sceneInfo == null) { Context.Instance.Logger.LogError("No SceneData privided"); return; }
+        SaveScene(_sceneInfo.Name, _items, preview);
     }
 
     public void SaveScene(string name, List<Node> items, Texture2D preview)
     {
-        PDDSceneData sceneData = new PDDSceneData();
-        sceneData.Name = name;
-        sceneData.ItemsList = items;
-
         string scenePath = Path.Combine(_scenesPath, name);
 
-        if (PDDUtilities.CreateDirectoryIfNotExists(scenePath))
+        PDDSceneData sceneData = new PDDSceneData();
+        sceneData.Name = name;
+        sceneData.ItemsList = new List<PDDNodeData>();
+
+        foreach (var item in _items)
         {
-            Debug.Log("Saving");
+            PDDNodeData data = new PDDNodeData();
+
+            data.Position = item.transform.position;
+            data.Rotation = item.transform.eulerAngles;
+            data.Scale = item.transform.localScale;
+            data.AssetPath = item.Item.AssetPath;
+            data.ToggleSettings = item.Item.ToggleSettings;
+
+            sceneData.ItemsList.Add(data);
         }
+
+        if (PDDUtilities.CreateDirectoryIfNotExists(scenePath)) { Debug.Log("Saving"); }
         else { Debug.Log("Rewriting"); }
 
 
@@ -117,5 +177,53 @@ public class LevelSystem : MonoBehaviour
         File.WriteAllText(sceneFilePath, json);
 
         Context.Instance.Logger.Log("Scene saved: " + sceneFilePath);
+    }
+
+    public void LoadScene(string path)
+    {
+        if (string.IsNullOrEmpty(path) | !File.Exists(path)) { Context.Instance.Logger.LogError($"Path {path} not exists"); return; }
+
+        PDDSceneData sceneData;
+
+        if (PDDUtilities.TryReadFromFile(path, out string dataJson))
+        {
+            sceneData = JsonUtility.FromJson<PDDSceneData>(dataJson);
+            Context.Instance.Logger.Log($"Scene data file was loaded by path {path}");
+        }
+
+        else { return; }
+
+        _loader = new LoadingHelper(sceneData.ItemsList.Count, sceneData);
+    }
+
+
+
+    private void LoadingIterator()
+    {
+        
+    }
+}
+
+public class LoadingHelper
+{
+    public int NodesCount;
+    public int CurrentNode;
+    public PDDSceneData SceneData;
+
+    public LoadingHelper(int nodesCount, PDDSceneData data)
+    {
+        NodesCount = nodesCount;
+        CurrentNode = 0;
+        SceneData = data;
+    }
+}
+
+public class SceneInfo
+{ 
+    public string Name;
+
+    public SceneInfo(string name)
+    {
+        Name = name;
     }
 }

@@ -4,6 +4,7 @@ using PDDEditor.Types;
 public class PDDItem : MonoBehaviour
 {
     public string Name;
+    [HideInInspector] public string AssetPath;
 
     public ObjectType Type;
 

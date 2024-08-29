@@ -126,6 +126,7 @@ MonoBehaviour:
   _scenesListButton_close: {fileID: 8984434918549971016}
   _SettingsButton: {fileID: 1333473858054336999}
   _importButton: {fileID: 5302227872410782575}
+  _assetsManagerButton: {fileID: 2869618493636085500}
   _exitButton: {fileID: 5331823421380257553}
   _sceneTicket: {fileID: 1551478676308580949, guid: 2c932e6ee84e2544e843b1c525ccccff,
     type: 3}

@@ -7,7 +7,6 @@ public class ExportWindow : EditorWindow
 {
     private string _exportPath;
     private string _exportFileName;
-
     private GameObject _exportPrefab;
 
     [MenuItem("PDDEditor/ExportAsset")]
@@ -47,10 +46,6 @@ public class ExportWindow : EditorWindow
 
                 string fullExportPath = Path.Combine(_exportPath, _exportFileName);
 
-                // ”казываем полный путь к файлу AssetBundle
-  
-
-                // Ёкспортируем AssetBundle только дл€ выбранного префаба
                 BuildPipeline.BuildAssetBundles(Path.GetDirectoryName(fullExportPath), BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows);
 
                 string manifestPath = fullExportPath + ".manifest";
@@ -68,6 +63,9 @@ public class ExportWindow : EditorWindow
                     File.Delete(dirPath + ".manifest");
                 }
 
+                // ѕереименовываем итоговый файл
+                RenameExportedFile(fullExportPath);
+
                 importer.SetAssetBundleNameAndVariant("", "");
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
@@ -77,6 +75,15 @@ public class ExportWindow : EditorWindow
             {
                 Debug.LogError("Prefab, export path, and export file name must be set!");
             }
+        }
+    }
+
+    private void RenameExportedFile(string filePath)
+    {
+        string newFilePath = Path.ChangeExtension(filePath, ".pddasset");
+        if (File.Exists(filePath))
+        {
+            File.Move(filePath, newFilePath);
         }
     }
 }

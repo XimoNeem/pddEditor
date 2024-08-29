@@ -81,4 +81,44 @@ public static class PDDUtilities
             return false;
         }
     }
+
+    public static bool CopyFile(string sourcePath, string destinationPath)
+    {
+        EnsureDirectoryExists(destinationPath);
+
+        try
+        {
+            File.Copy(sourcePath, destinationPath, true); // true to overwrite if it already exists
+            Debug.Log($"File copied from {sourcePath} to {destinationPath}");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Context.Instance.Logger.LogError("Error copying file: " + ex.Message);
+            return false;
+        }
+    }
+
+    public static bool DeleteFile(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                Context.Instance.Logger.Log($"Deleted file at {path}");
+                return true;
+            }
+            else
+            {
+                Context.Instance.Logger.LogWarning("File does not exist: " + path);
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Context.Instance.Logger.LogError("Error deleting file: " + ex.Message);
+            return false;
+        }
+    }
 }

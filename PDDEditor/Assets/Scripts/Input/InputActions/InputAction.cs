@@ -16,7 +16,7 @@ public class InputAction : ScriptableObject
     {
         if (action != null)
         {
-            action.Invoke(); // Вызываем метод, назначенный делегату
+            action.Invoke();
         }
     }
 }

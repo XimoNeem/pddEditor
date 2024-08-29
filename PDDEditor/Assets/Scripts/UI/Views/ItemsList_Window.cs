@@ -6,7 +6,7 @@ using System;
 using PDDEditor.Types;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEngine.Lumin;
+using PDDEditor.Assets;
 
 public class ItemsList_Window : WindowController
 {
@@ -15,12 +15,13 @@ public class ItemsList_Window : WindowController
 
     [SerializeField] private ObjectItem_Ticket _ticket;
 
-    private Action<PDDItem> _cachedAction;
+    private Action<string> _cachedAction;
 
     public override void OnEnable()
     {
         base.OnEnable();
-        SetTypesDropdown();
+        
+        Context.Instance.UIDrawer.InitTypesDropdown(_typeDropdown);
 
         _typeDropdown.onValueChanged.AddListener(RefreshList);
         Context.Instance.EventManager.OnItemSelected.AddListener(delegate { AssetContainer.Unload(); });
@@ -36,24 +37,16 @@ public class ItemsList_Window : WindowController
     {
         base.Initialize(values);
 
-        if (values[0].GetType() != typeof(Action<PDDItem>)) { Debug.LogError("Need object of type <Action<PDDItem>> for initialization"); return; }
+        if (values[0].GetType() != typeof(Action<string>)) { Debug.LogError("Need object of type <Action<string>> for initialization"); return; }
 
-        _cachedAction = (Action<PDDItem>)values[0];
+        _cachedAction = (Action<string>)values[0];
 
-    }
-
-    private void SetTypesDropdown()
-    {
-        ObjectType[] elements = (ObjectType[])Enum.GetValues(typeof(ObjectType));
-        string[] elementStrings = Array.ConvertAll(elements, e => e.ToString());
-
-        _typeDropdown.ClearOptions();
-        _typeDropdown.AddOptions(new List<string>(elementStrings));
     }
 
     private void RefreshList(int value)
     {
-        ObjectType type = (ObjectType)Enum.Parse(typeof(ObjectType), value.ToString());
+        //ObjectType type = (ObjectType)Enum.Parse(typeof(ObjectType), value.ToString());
+        string type = _typeDropdown.captionText.text;
         StopAllCoroutines();
         ClearList();
         StartCoroutine(AddItems(type));
@@ -68,22 +61,21 @@ public class ItemsList_Window : WindowController
         }
     }
 
-    private IEnumerator AddItems(ObjectType type)
+    private IEnumerator AddItems(string type)
     {
         yield return new WaitForEndOfFrame();
 
-        PDDItem[] items = Resources.LoadAll<PDDItem>("");
+        PDDAssetData[] items = Context.Instance.AssetRegister.GetAssets(type);
 
-        foreach (var item in items)
+        Debug.Log(items);
+
+        foreach (PDDAssetData item in items)
         {
-            if (item.Type == type)
-            {
-                ObjectItem_Ticket ticket = Instantiate(_ticket, _contentParent);
-                ticket.Name = item.name;
-                ticket.Item = item;
-                ticket.OnSelectedAction = _cachedAction;
-                ticket.Initialize();
-            }
+            ObjectItem_Ticket ticket = Instantiate(_ticket, _contentParent);
+            ticket.Name = item.Name;
+            ticket.AssetPath = item.Path;
+            ticket.OnSelectedAction = _cachedAction;
+            ticket.Initialize();
         }
     }
 }

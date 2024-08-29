@@ -11,6 +11,7 @@ public class MainMenu_Window : WindowController
     [SerializeField] private Button _scenesListButton_close;
     [SerializeField] private Button _SettingsButton;
     [SerializeField] private Button _importButton;
+    [SerializeField] private Button _assetsManagerButton;
     [SerializeField] private Button _exitButton;
 
     [SerializeField] private Scene_Ticket _sceneTicket;
@@ -19,16 +20,7 @@ public class MainMenu_Window : WindowController
 
     private void Awake()
     {
-        _loadButton.onClick.AddListener
-        (
-            delegate 
-            { 
-                Context.Instance.SceneLoader.LoadScene(PDDEditorScenes.Main);
-                AssetContainer.Unload();
-                Context.Instance.AssetLoader.LoadAsset(PDDEditorWindows.MainTopBar);
-                Context.Instance.AssetLoader.LoadAsset(PDDEditorWindows.MainButtomBar);
-            }
-        );
+        _loadButton.onClick.AddListener(Context.Instance.LevelSystem.CreateNewScene);
 
         _exitButton.onClick.AddListener( delegate { Application.Quit(); } );
         _importButton.onClick.AddListener( delegate 
@@ -40,6 +32,7 @@ public class MainMenu_Window : WindowController
 
         _scenesListButton.onClick.AddListener(ShowScenes);
         _scenesListButton_close.onClick.AddListener(HideScenes);
+        _assetsManagerButton.onClick.AddListener(delegate { Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.AssetsManager); } );
     }
 
     private void ShowScenes()

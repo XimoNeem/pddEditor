@@ -14,9 +14,10 @@ public class Context : MonoBehaviour
     public LevelSystem LevelSystem;
     public ScreenShoter ScreenShoter;
     public DebugSystem Logger;
-/*    public PDDUtilities Utilities;*/
     public PDDEditorContainer EditorBase;
     public AssetRegister AssetRegister;
+
+    //public PDDUtilities Utilities;
 
 
     private void Awake()
@@ -33,7 +34,6 @@ public class Context : MonoBehaviour
         SceneLoader = new SceneLoader();
         ScreenShoter = new ScreenShoter();
         Logger = new DebugSystem();
-/*        Utilities = new PDDUtilities();*/
         EditorBase = new PDDEditorContainer();
 
         UIDrawer = this.AddComponent<UIDrawer>();

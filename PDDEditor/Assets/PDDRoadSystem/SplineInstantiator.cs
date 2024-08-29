@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
-using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.Splines;
-using UnityEngine.UIElements;
 
 [SelectionBase]
 [ExecuteInEditMode]

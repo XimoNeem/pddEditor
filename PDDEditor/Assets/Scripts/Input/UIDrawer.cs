@@ -1,8 +1,13 @@
+using PDDEditor.Types;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.UI;
 
 
 public class UIDrawer : MonoBehaviour
@@ -99,6 +104,62 @@ public class UIDrawer : MonoBehaviour
         Context.Instance.EventManager.OnNodeSettings.Invoke(node);
     }
 
+    public void TintImageByTime(Image image, Color tintColor, Color originalColor, float time)
+    {
+        StartCoroutine(ChangeColor(image, tintColor, originalColor, time));
+    }
+
+    public void TintImageByTime(Image image, Color tintColor, Color originalColor)
+    {
+        StartCoroutine(ChangeColor(image, tintColor, originalColor, 0.5f));
+    }
+
+    private IEnumerator ChangeColor(Image image, Color tintColor, Color originalColor, float time)
+    {
+        float iteration = 0;
+        while (iteration < time)
+        {
+            image.color = Color.Lerp(tintColor, originalColor, iteration / time);
+            iteration += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public void InitTypesDropdown(TMP_Dropdown dropdown)
+    {
+        //ObjectType[] elements = (ObjectType[])Enum.GetValues(typeof(ObjectType));
+        string[] elementStrings = PDDObjectTypes.GetTypes();
+
+        dropdown.ClearOptions();
+        dropdown.AddOptions(new List<string>(elementStrings));
+
+        if (dropdown.GetComponentInChildren<ScrollRect>())
+        {
+            dropdown.GetComponentInChildren<ScrollRect>().scrollSensitivity = 30;
+        }
+    }
+
+    public void SetRawImageFromPath(string imagePath, RawImage previewImage)
+    {
+        StartCoroutine(LoadTexture(imagePath, previewImage));
+    }
+
+    private IEnumerator LoadTexture(string imagePath, RawImage previewImage)
+    {
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath))
+        {
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                previewImage.texture = DownloadHandlerTexture.GetContent(uwr);
+            }
+            else
+            {
+                Debug.LogError($"Failed to load texture from {imagePath}: {uwr.error}");
+            }
+        }
+    }
 
     private void OnGUI()
     {

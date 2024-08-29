@@ -6,6 +6,8 @@ using PDDEditor.UI;
 using UnityEngine.Networking;
 using System.Collections;
 using System.IO;
+using Unity.VisualScripting;
+using PDDEditor.Paths;
 
 public class ImportPreview_Window : WindowController
 {
@@ -13,7 +15,10 @@ public class ImportPreview_Window : WindowController
     [SerializeField] private Button _selectButton;
     [SerializeField] private Button _loadButton;
     [SerializeField] private Button _cancelButton;
+    [SerializeField] private Button _createTypeButton;
     [SerializeField] private TMP_InputField _pathInput;
+    [SerializeField] private TMP_InputField _nameInput;
+    [SerializeField] private TMP_Dropdown _typeDropdown;
 
     private string _assetBundlePath;
     private GameObject _loadedPrefab;
@@ -34,8 +39,12 @@ public class ImportPreview_Window : WindowController
 
         _selectButton.onClick.AddListener(delegate { Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.FilePicker, action, FileType.PDDAsset); } );
 
-        _loadButton.onClick.AddListener(LoadAssetBundle);
+        _pathInput.onEndEdit.AddListener(OnPathInput);
         _cancelButton.onClick.AddListener(Cancel);
+        _createTypeButton.onClick.AddListener(CreateNewType);
+        _loadButton.onClick.AddListener(Import);
+
+        Context.Instance.UIDrawer.InitTypesDropdown(_typeDropdown);
     }
 
     public override void OnDisable()
@@ -52,19 +61,75 @@ public class ImportPreview_Window : WindowController
     private void OnFileSelected(FileSystemInfo file)
     {
         _pathInput.text = file.FullName;
+        LoadAssetBundle();
+    }
+
+    private void CreateNewType()
+    {
+        PopupHeader header = new PopupHeader("¬ведите название новой группы объектов");
+        PopupInput input = new PopupInput("¬ведите название группы", OnTypeInput);
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.PopupWindow, header, input);
+    }
+
+    private void OnTypeInput(string type)
+    {
+        Context.Instance.EditorBase.EditorTypes.CreateNewType(type);
+        Context.Instance.UIDrawer.InitTypesDropdown(_typeDropdown);
+    }
+
+    private void OnPathInput(string path)
+    {
+        _assetBundlePath = path;
+        LoadAssetBundle();
     }
 
     private void LoadAssetBundle()
     {
         _assetBundlePath = _pathInput.text;
 
-        if (string.IsNullOrEmpty(_assetBundlePath))
+        if (string.IsNullOrEmpty(_assetBundlePath) | !File.Exists(_assetBundlePath))
         {
-            Debug.LogError("Path is empty!");
+            Context.Instance.UIDrawer.TintImageByTime(_pathInput.GetComponent<Image>(), Color.red, Color.white);
+            Context.Instance.Logger.LogError("Path is empty!");
             return;
         }
 
+        _nameInput.text = Path.GetFileName(_assetBundlePath.Replace(".pddasset", ""));
+
         StartCoroutine(Load(_assetBundlePath));
+    }
+
+    private void Import()
+    {
+        if (string.IsNullOrEmpty(_assetBundlePath) | !File.Exists(_assetBundlePath))
+        {
+            Context.Instance.UIDrawer.TintImageByTime(_pathInput.GetComponent<Image>(), Color.red, Color.white);
+            Context.Instance.Logger.LogError("Path is empty!");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_nameInput.text))
+        {
+            Context.Instance.UIDrawer.TintImageByTime(_nameInput.GetComponent<Image>(), Color.red, Color.white);
+            Context.Instance.Logger.LogError("Wrong name");
+            return;
+        }
+
+        string newPath = Path.Combine(Application.persistentDataPath + PDDEditorPaths.AssetsPath, _typeDropdown.captionText.text, _nameInput.text);
+        Debug.Log(newPath);
+        if (File.Exists(newPath))
+        {
+            Context.Instance.Logger.LogError("This file is already exists");
+            Context.Instance.UIDrawer.TintImageByTime(_nameInput.GetComponent<Image>(), Color.red, Color.white);
+            return;
+        }
+
+        //string newPath
+
+        if (Context.Instance.AssetRegister.Import(_assetBundlePath, _typeDropdown.captionText.text, _nameInput.text, GameObject.Find("PreviewCamera").GetComponent<Camera>()))
+        {
+            //Debug.Log("done");
+        }
     }
 
     private void ShowPrefabPreview(GameObject prefab)

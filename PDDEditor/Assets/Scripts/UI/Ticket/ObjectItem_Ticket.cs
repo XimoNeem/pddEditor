@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class ObjectItem_Ticket : Ticket
 {
-    public PDDItem Item;
+    public string AssetPath;
     public string Name;
     public string Description;
     public Texture2D Preview;
-    public Action<PDDItem> OnSelectedAction;
+    public Action<string> OnSelectedAction;
 
     [SerializeField] private Image _preview;
     [SerializeField] private Button _button;
@@ -35,7 +35,7 @@ public class ObjectItem_Ticket : Ticket
     {
         if (OnSelectedAction != null)
         {
-            OnSelectedAction.Invoke(Item);
+            OnSelectedAction.Invoke(AssetPath);
         }
     }
 }

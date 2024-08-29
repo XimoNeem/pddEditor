@@ -1,4 +1,6 @@
 
+using PDDEditor.Assets;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,7 +25,7 @@ namespace PDDEditor
         public class PDDSceneData
         {
             public string Name;
-            public List<Node> ItemsList;
+            public List<PDDNodeData> ItemsList;
         }
     }
 
@@ -43,11 +45,61 @@ namespace PDDEditor
             public const string SceneSettings = "SceneSettings";
             public const string EditorSettings = "EditorSettings";
             public const string DebugLayer = "DebugLayer";
+            public const string PopupWindow = "PopupWindow";
+            public const string AssetsManager = "AssetsManager";
+        }
+
+        public class PopupElement
+        {
+            
+        }
+
+        public class PopupHeader
+        {
+            public string Text;
+
+            public PopupHeader(string text)
+            {
+                Text = text ?? throw new ArgumentNullException(nameof(text));
+            }
+        }
+
+        public class PopupButton : PopupElement
+        {
+            public string Name;
+            public Color Color;
+            public Action ClickAction;
+
+            public PopupButton(string name, Color color, Action clickAction)
+            {
+                Name = name ?? throw new ArgumentNullException(nameof(name));
+                Color = color;
+                ClickAction = clickAction ?? throw new ArgumentNullException(nameof(clickAction));
+            }
+        }
+
+        public class PopupInput : PopupElement
+        {
+            public string PlaceHolderText;
+            public Action<string> Action;
+
+            public PopupInput(string placeHolderText, Action<string> action)
+            {
+                PlaceHolderText = placeHolderText ?? throw new ArgumentNullException(nameof(placeHolderText));
+                Action = action ?? throw new ArgumentNullException(nameof(action));
+            }
         }
     }
 
     namespace Types
     {
+        public static class PDDObjectTypes
+        {
+            public static string[] GetTypes()
+            {
+                return Context.Instance.EditorBase.EditorTypes.GetTypes();
+            }
+        }
         public enum ObjectType
         {
             StaticModel,
@@ -59,6 +111,7 @@ namespace PDDEditor
             AnimatedModel,
             Vegetation
         }
+
         public enum SettingType
         {
             Toggle,
@@ -98,11 +151,40 @@ namespace PDDEditor
         public static class PDDEditorPaths
         {
             public const string EditorSettings = "Editor/editor.json";
+            public const string EditorTypes = "Editor/types.json";
             public const string Node = "Assets/Prefabs/Node.prefab";
             public const string PreviewImageName = "scene.png";
             public const string SceneDataName = "data.json";
             public const string AssetsPath = "/PDDAssets";
             public const string ScenesPath = "/PDDScenes";
+        }
+    }
+
+    namespace Assets
+    {
+        public class PDDAssetData
+        {
+            public string Path; // Путь к ассету
+            public string ImagePath; // Путь к превью ассета
+            public string Name; // Имя ассета
+
+            public PDDAssetData(string path, string imagePath, string name)
+            {
+                Path = path;
+                ImagePath = imagePath;
+                Name = name;
+            }
+        }
+
+        [System.Serializable]
+        public class PDDNodeData
+        {
+            public Vector3 Position;
+            public Vector3 Rotation;
+            public Vector3 Scale;
+            public string AssetPath;
+
+            public ToggleSetting[] ToggleSettings;
         }
     }
 }
