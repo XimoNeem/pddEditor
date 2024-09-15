@@ -15,6 +15,9 @@ public class Popup_Window : WindowController
     [SerializeField] private Button _buttonTemplate;
     [SerializeField] private TMP_InputField _inputTemplate;
 
+    private string _title;
+    private System.Action<string> _inputCallback;
+
     public override void Initialize(params object[] values)
     {
         base.Initialize(values);
@@ -26,6 +29,7 @@ public class Popup_Window : WindowController
                 PopupHeader data = (PopupHeader)item;
 
                 if (_header != null) { _header.text = data.Text; }
+                _title = data.Text;
             }
 
             else if (item.GetType() == typeof(PopupButton))
@@ -49,6 +53,8 @@ public class Popup_Window : WindowController
                 newInput.gameObject.SetActive(true);
                 PopupInput data = (PopupInput)item;
 
+                _inputCallback = data.Action;
+
                 newInput.placeholder.GetComponent<TMP_Text>().text = data.PlaceHolderText;
                 newInput.GetComponentInChildren<Button>().onClick.AddListener(
                     delegate
@@ -61,6 +67,11 @@ public class Popup_Window : WindowController
 
             else { Debug.LogError("Need object of type <PopupElement> for initialization"); return; }
         }
+    }
+
+    private void OnInput(string value)
+    {
+        _inputCallback.Invoke(value);
     }
 
     public override void OnEnable()

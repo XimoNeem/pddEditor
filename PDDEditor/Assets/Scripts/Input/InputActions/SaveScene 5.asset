@@ -14,6 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   action:
     m_PersistentCalls:
-      m_Calls: []
-  ButtonPath: Object/To ground
-  KeyCodes: 
+      m_Calls:
+      - m_Target: {fileID: 2000875319814995926, guid: c23d318d36bb28c4fbf7f2ff89140878,
+          type: 3}
+        m_TargetAssemblyTypeName: InputActions, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  ButtonPath: "\u041E\u0431\u044A\u0435\u043A\u0442/\u041E\u043F\u0443\u0441\u0442\u0438\u0442\u044C"
+  KeyCodes: 3201000006010000

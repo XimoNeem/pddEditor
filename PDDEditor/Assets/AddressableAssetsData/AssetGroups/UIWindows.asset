@@ -87,6 +87,46 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c01cbc1bfe1077a4b989bf3581cade14
+    m_Address: TexturesPreview
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b913737c9f5c8824db0dc0f6cc391838
+    m_Address: UtilityPicker
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 95cd1b61bb81d76479b028309f536b74
+    m_Address: InfoWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39502ec6f5beea547a3099f1808037ec
+    m_Address: TexturePicker
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32f5836ea448a014fb5cfa924dccc016
+    m_Address: Hierarchy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a8d3d1e613239cc46a055db96eaa6e29
+    m_Address: ActivationWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9d375a11bd5c744d9f32e20eac16bad
+    m_Address: MeasureWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ebf5b3e5cb969745ba588301cb18779
+    m_Address: MainSettingsWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 53f50cfe2dc65fe4997cc3b9d914669b, type: 2}
   m_SchemaSet:

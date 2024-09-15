@@ -18,6 +18,7 @@ public class AssetRegister : MonoBehaviour
         _dataPath = Application.persistentDataPath + PDDEditorPaths.AssetsPath;
 
         PDDUtilities.CreateDirectoryIfNotExists(_dataPath);
+        PDDUtilities.CreateDirectoryIfNotExists(Path.Combine(Application.persistentDataPath, PDDEditorPaths.OverlayImagesPath));
         //ObjectType[] elements = (ObjectType[])Enum.GetValues(typeof(ObjectType));
         string[] elementStrings = PDDObjectTypes.GetTypes();
         foreach (var item in elementStrings)
@@ -25,6 +26,7 @@ public class AssetRegister : MonoBehaviour
             PDDUtilities.CreateDirectoryIfNotExists(Path.Combine(_dataPath, item));
         }
 
+        PDDUtilities.CreateDirectoryIfNotExists(Application.persistentDataPath + PDDEditorPaths.TexturesPath);
         Debug.Log($"Created paths {_dataPath}");
     }
 
@@ -47,14 +49,118 @@ public class AssetRegister : MonoBehaviour
         }
     }
 
-    public PDDAssetData[] GetAssets(string type)
+    public bool ImportTextures(string[] texturePaths, string textureGroupName)
+    {
+        string texturesDirectory = Path.Combine(Application.persistentDataPath + PDDEditorPaths.TexturesPath, textureGroupName);
+
+        if (!PDDUtilities.CreateDirectoryIfNotExists(texturesDirectory))
+        {
+            Context.Instance.Logger.LogError($"Failed to create directory for textures: {texturesDirectory}");
+        }
+
+        foreach (string texturePath in texturePaths)
+        {
+            string fileName = Path.GetFileName(texturePath);
+            string newTexturePath = Path.Combine(texturesDirectory, fileName);
+
+            try
+            {
+                File.Copy(texturePath, newTexturePath, true);
+                Context.Instance.Logger.Log($"Texture {fileName} imported to {newTexturePath}");
+            }
+            catch (Exception ex)
+            {
+                Context.Instance.Logger.LogError($"Failed to import texture {fileName}: {ex.Message}");
+                continue;
+            }
+        }
+
+        return true;
+    }
+
+    public string[] GetTexturePaths(string textureGroupName)
+    {
+        string texturesDirectory = Path.Combine(Application.persistentDataPath + PDDEditorPaths.TexturesPath, textureGroupName);
+
+        if (!Directory.Exists(texturesDirectory))
+        {
+            Context.Instance.Logger.LogError($"Textures directory '{textureGroupName}' does not exist at path {texturesDirectory}.");
+            return Array.Empty<string>();
+        }
+
+        try
+        {
+            // ѕолучаем все пути к файлам текстур в директории
+            string[] texturePaths = Directory.GetFiles(texturesDirectory, "*.*", SearchOption.TopDirectoryOnly);
+            return texturePaths;
+        }
+        catch (Exception ex)
+        {
+            Context.Instance.Logger.LogError($"Error retrieving textures from directory '{texturesDirectory}': {ex.Message}");
+            return Array.Empty<string>();
+        }
+    }
+
+    public bool CreateTextureDirectory(string directoryName)
+    {
+        string texturesDirectory = Path.Combine(Application.persistentDataPath + PDDEditorPaths.TexturesPath, directoryName);
+
+        if (Directory.Exists(texturesDirectory))
+        {
+            Context.Instance.Logger.LogError($"Directory '{directoryName}' already exists at path {texturesDirectory}.");
+            return false;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(texturesDirectory);
+            Context.Instance.Logger.Log($"Created new texture directory at {texturesDirectory}");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Context.Instance.Logger.LogError($"Failed to create directory '{directoryName}': {ex.Message}");
+            return false;
+        }
+    }
+
+    public List<string> GetAllTextureDirectories()
+    {
+        List<string> result = new List<string>();
+        string texturesRootPath = Path.Combine(Application.persistentDataPath + PDDEditorPaths.TexturesPath);
+
+        if (!Directory.Exists(texturesRootPath))
+        {
+            Context.Instance.Logger.LogError($"Textures root path '{texturesRootPath}' does not exist.");
+            return result;
+        }
+
+        try
+        {
+            // ѕолучаем все подкаталоги в корневой директории текстур
+            string[] directories = Directory.GetDirectories(texturesRootPath, "*", SearchOption.TopDirectoryOnly);
+            foreach (string directory in directories)
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+                result.Add(directoryInfo.Name);
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Context.Instance.Logger.LogError($"Error retrieving texture directories: {ex.Message}");
+            return result;
+        }
+    }
+
+    public List<PDDAssetData> GetAssets(string type)
     {
         string assetsPath = Path.Combine(_dataPath, type);
 
         if (!Directory.Exists(assetsPath))
         {
             Context.Instance.Logger.LogError($"Path {assetsPath} does not exist.");
-            return Array.Empty<PDDAssetData>();
+            return null;
         }
 
         DirectoryInfo directoryInfo = new DirectoryInfo(assetsPath);
@@ -72,7 +178,7 @@ public class AssetRegister : MonoBehaviour
             ));
         }
 
-        return assets.ToArray();
+        return assets;
     }
 
     public void DeleteAsset(string path)
@@ -106,6 +212,12 @@ public class AssetRegister : MonoBehaviour
     public void LoadAsset(string path)
     {
         _cachedAction = Context.Instance.LevelSystem.CreateObject;
+        StartCoroutine(Load(path));
+    }
+
+    public void LoadAsset(string path, Action<PDDItem> callbacl)
+    {
+        _cachedAction = callbacl;
         StartCoroutine(Load(path));
     }
 

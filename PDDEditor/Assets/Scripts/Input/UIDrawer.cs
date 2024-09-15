@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -28,11 +27,13 @@ public class UIDrawer : MonoBehaviour
     {
         _loadedProviders = new List<LocalAssetProvider>();
         Context.Instance.EventManager.OnNodeSelected.AddListener(ShowSettingsWindow);
+        //Context.Instance.EventManager.OnUtilitySelected.AddListener(ShowSettingsWindow);
     }
 
     private void OnDisable()
     {
         Context.Instance.EventManager.OnNodeSelected.RemoveListener(ShowSettingsWindow);
+        //Context.Instance.EventManager.OnUtilitySelected.RemoveListener(ShowSettingsWindow);
     }
 
     public void ShowWindow(string name, params object[] values)
@@ -55,7 +56,6 @@ public class UIDrawer : MonoBehaviour
     {
         for (int i = 0; i < _loadedProviders.Count; i++)
         {
-            Debug.Log(i);
             if (_loadedProviders[i] != null)
             {
                 try
@@ -94,9 +94,9 @@ public class UIDrawer : MonoBehaviour
         _showHint = false;
     }
 
-    private void ShowSettingsWindow(Node node)
+    private void ShowSettingsWindow(PDDNode node)
     {
-        if (_settingWindow == null)
+        if (GetLoadedWindow<ObjectSettings_Window>() == null)
         {
             ShowWindow(PDDEditor.UI.PDDEditorWindows.ObjectSettings, node);
         }

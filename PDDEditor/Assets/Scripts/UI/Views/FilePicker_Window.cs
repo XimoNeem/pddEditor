@@ -2,7 +2,6 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
 using System.IO;
-using Unity.VisualScripting;
 using System;
 
 public class FilePicker_Window : WindowController
@@ -33,7 +32,11 @@ public class FilePicker_Window : WindowController
     {
         base.Initialize(values);
 
-        if (values[0].GetType() != typeof(Action<FileSystemInfo>)) { Debug.LogError("Need object of type <Action<Color>> for initialization"); return; }
+        if (values[0].GetType() != typeof(Action<FileSystemInfo>))
+        {
+            Debug.LogError("Need object of type <Action<Color>> for initialization");
+            return;
+        }
 
         _callback = (Action<FileSystemInfo>)values[0];
         FileType type = (FileType)values[1];
@@ -48,15 +51,40 @@ public class FilePicker_Window : WindowController
                 break;
             case FileType.PDDAsset:
                 _showFiles = true;
-                _fileType = ".pddasset";
+                _fileType = "pddasset";
                 break;
         }
+
+        _path = Application.dataPath;
+
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+        Action<FileSystemInfo> callback = OnInput;
+        NativeWindowsUtility.ShowFileBrowser(_fileType, !_showFiles, callback);
+
+        foreach (var item in this.GetComponentsInChildren<Transform>())
+        {
+            item.gameObject.SetActive(false);
+        }
+
+        return;
+#endif
     }
 
     private void Start()
     {
         _path = Application.dataPath;
-        RefreshFileList(_path);
+
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+        return;
+#endif
+        RefreshFileList(_path); // Для редактора и других платформ
+    }
+
+    private void OnInput(FileSystemInfo fileSystemInfo)
+    {
+        Context.Instance.Logger.LogWarning(fileSystemInfo.FullName);
+        _callback.Invoke(fileSystemInfo);
+
     }
 
     private void SelectFolder()
@@ -87,7 +115,7 @@ public class FilePicker_Window : WindowController
 
         foreach (FileInfo file in files)
         {
-            if (file.Name.EndsWith(_fileType))
+            if (string.IsNullOrEmpty(_fileType) || file.Name.EndsWith(_fileType))
             {
                 AddFileTicket(file);
             }
@@ -99,8 +127,9 @@ public class FilePicker_Window : WindowController
         File_Ticket newItem = Instantiate(_directoryTicket, _contentParent);
         newItem.Name.text = dir.Name;
 
-        newItem.Button.onClick.AddListener( delegate { RefreshFileList(dir.FullName); } );
+        newItem.Button.onClick.AddListener(delegate { RefreshFileList(dir.FullName); });
     }
+
     private void AddFileTicket(FileInfo file)
     {
         File_Ticket newItem = Instantiate(_fileTicket, _contentParent);
@@ -108,8 +137,8 @@ public class FilePicker_Window : WindowController
 
         if (_showFiles)
         {
-            newItem.Button.onClick.AddListener(delegate { _callback.Invoke(file); } );
-            newItem.Button.onClick.AddListener(delegate { AssetContainer.Unload(); } );
+            newItem.Button.onClick.AddListener(delegate { _callback.Invoke(file); });
+            newItem.Button.onClick.AddListener(delegate { AssetContainer.Unload(); });
         }
     }
 

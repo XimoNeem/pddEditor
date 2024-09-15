@@ -16,6 +16,8 @@ public class ImportPreview_Window : WindowController
     [SerializeField] private Button _loadButton;
     [SerializeField] private Button _cancelButton;
     [SerializeField] private Button _createTypeButton;
+    [SerializeField] private Button _toTexturesButton;
+
     [SerializeField] private TMP_InputField _pathInput;
     [SerializeField] private TMP_InputField _nameInput;
     [SerializeField] private TMP_Dropdown _typeDropdown;
@@ -43,6 +45,8 @@ public class ImportPreview_Window : WindowController
         _cancelButton.onClick.AddListener(Cancel);
         _createTypeButton.onClick.AddListener(CreateNewType);
         _loadButton.onClick.AddListener(Import);
+
+        _toTexturesButton.onClick.AddListener(delegate { Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.TexturesPreview); this.AssetContainer.Unload(); });
 
         Context.Instance.UIDrawer.InitTypesDropdown(_typeDropdown);
     }
@@ -124,11 +128,10 @@ public class ImportPreview_Window : WindowController
             return;
         }
 
-        //string newPath
-
         if (Context.Instance.AssetRegister.Import(_assetBundlePath, _typeDropdown.captionText.text, _nameInput.text, GameObject.Find("PreviewCamera").GetComponent<Camera>()))
         {
-            //Debug.Log("done");
+            Context.Instance.UIDrawer.GetLoadedWindow<ImportPreview_Window>().AssetContainer.Unload();
+            Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.ImportPreview);
         }
     }
 
@@ -147,8 +150,10 @@ public class ImportPreview_Window : WindowController
     {
         using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(path))
         {
+            Debug.Log(path);
+            Debug.Log(www.downloadProgress);
             yield return www.SendWebRequest();
-
+            Debug.Log(www.downloadProgress);
             if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("Failed to load AssetBundle: " + www.error);

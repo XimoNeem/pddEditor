@@ -25,7 +25,7 @@ public class AssetsManager_Window : WindowController
     private void LoadAssets(int value)
     {
         ClearAssetsList();
-        PDDAssetData[] data = Context.Instance.AssetRegister.GetAssets(_typeDropdown.captionText.text);
+        List<PDDAssetData> data = Context.Instance.AssetRegister.GetAssets(_typeDropdown.captionText.text);
 
         foreach (var asset in data)
         {

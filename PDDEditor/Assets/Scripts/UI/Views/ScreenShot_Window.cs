@@ -8,6 +8,8 @@ using System.Security.Cryptography;
 using System.IO;
 using PDDEditor.UI;
 using System;
+using PDDEditor.Paths;
+using PDDEditor.Types;
 
 public class ScreenShot_Window : WindowController
 {
@@ -18,13 +20,40 @@ public class ScreenShot_Window : WindowController
     [SerializeField] private Button _pathButton;
     [SerializeField] private Slider _progressSlider;
 
+    [SerializeField] private Transform _overlayItemsContent;
+    [SerializeField] private Button _overlayItemTemplate;
+
     [SerializeField] private int _width = 1920;
     [SerializeField] private int _height = 1080;
+
+    [Space]
+
+    [SerializeField] private Button _selectCameraButton;
+
+    [SerializeField] private Button _moveRightButton;
+    [SerializeField] private Button _moveLeftButton;
+    [SerializeField] private Button _moveUpButton;
+    [SerializeField] private Button _moveDownButton;
+    [SerializeField] private Button _moveForwardButton;
+    [SerializeField] private Button _moveBackwardButton;
+
+    [SerializeField] private Button _rotateRightButton;
+    [SerializeField] private Button _rotateLeftButton;
+    [SerializeField] private Button _rotateUpButton;
+    [SerializeField] private Button _rotateDownButton;
+
 
     private const int _maxWidth = 4000;
     private const int _maxHeight = 2000;
 
     private string _path;
+    private string _overlayImagePath;
+
+    public float moveStep = 0.5f;  // Шаг перемещения камеры
+    public float rotateStep = 5.0f; // Шаг вращения камеры
+    private Transform parentTransform;
+
+    //private Camera _camera;
 
     public override void OnEnable()
     {
@@ -41,6 +70,44 @@ public class ScreenShot_Window : WindowController
         _path = Application.dataPath;
         _pathInput.text = _path;
 
+        _selectCameraButton.onClick.AddListener(SelectCamera);
+
+        if (_moveRightButton != null) _moveRightButton.onClick.AddListener(MoveRight);
+        if (_moveLeftButton != null) _moveLeftButton.onClick.AddListener(MoveLeft);
+        if (_moveUpButton != null) _moveUpButton.onClick.AddListener(MoveUp);
+        if (_moveDownButton != null) _moveDownButton.onClick.AddListener(MoveDown);
+        if (_moveForwardButton != null) _moveForwardButton.onClick.AddListener(MoveForward);
+        if (_moveBackwardButton != null) _moveBackwardButton.onClick.AddListener(MoveBackward);
+
+        if (_rotateRightButton != null) _rotateRightButton.onClick.AddListener(RotateRight);
+        if (_rotateLeftButton != null) _rotateLeftButton.onClick.AddListener(RotateLeft);
+        if (_rotateUpButton != null) _rotateUpButton.onClick.AddListener(RotateUp);
+        if (_rotateDownButton != null) _rotateDownButton.onClick.AddListener(RotateDown);
+
+        if (_moveRightButton != null) _moveRightButton.onClick.AddListener(RequestPreview);
+        if (_moveLeftButton != null) _moveLeftButton.onClick.AddListener(RequestPreview);
+        if (_moveUpButton != null) _moveUpButton.onClick.AddListener(RequestPreview);
+        if (_moveDownButton != null) _moveDownButton.onClick.AddListener(RequestPreview);
+        if (_moveForwardButton != null) _moveForwardButton.onClick.AddListener(RequestPreview);
+        if (_moveBackwardButton != null) _moveBackwardButton.onClick.AddListener(RequestPreview);
+
+        if (_rotateRightButton != null) _rotateRightButton.onClick.AddListener(RequestPreview);
+        if (_rotateLeftButton != null) _rotateLeftButton.onClick.AddListener(RequestPreview);
+        if (_rotateUpButton != null) _rotateUpButton.onClick.AddListener(RequestPreview);
+        if (_rotateDownButton != null) _rotateDownButton.onClick.AddListener(RequestPreview);
+
+        Camera renderCamera = Context.Instance?.ScreenShoter?.renderCamera;
+
+        if (renderCamera == null)
+        {
+            Debug.LogError("Render Camera is not set.");
+        }
+        else
+        {
+            parentTransform = renderCamera.transform.parent;
+        }
+
+        CreateOverlayItems();
         RequestPreview();
     }
 
@@ -52,18 +119,101 @@ public class ScreenShot_Window : WindowController
         _heightInput.onEndEdit.RemoveListener(SetHeight);
     }
 
+    private void SelectCamera()
+    {
+        Action<UtilityNode> action = OnCamereSelected;
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.UtilityPicker, action, UtilityType.Camera);
+    }
+
+    private void OnCamereSelected(UtilityNode node)
+    {
+        Context.Instance.ScreenShoter.renderCamera = node.GetComponentInChildren<Camera>();
+        RequestPreview();
+        Debug.Log("Done camera");
+
+        Camera renderCamera = Context.Instance?.ScreenShoter?.renderCamera;
+
+        if (renderCamera == null)
+        {
+            Debug.LogError("Render Camera is not set.");
+        }
+        else
+        {
+            parentTransform = renderCamera.transform.parent;
+        }
+    }
+
+    private void CreateOverlayItems()
+    {
+        string path = Path.Combine(Application.persistentDataPath, PDDEditorPaths.OverlayImagesPath);
+
+        string[] files = Directory.GetFiles(path, "*.png");
+
+/*        foreach (Transform child in _overlayItemsContent)
+        {
+            Destroy(child.gameObject);
+        }*/
+
+        foreach (string file in files)
+        {
+            Button overlayItem = Instantiate(_overlayItemTemplate, _overlayItemsContent);
+
+            Texture2D texture = LoadTexture(file);
+
+            if (texture != null)
+            {
+                overlayItem.GetComponentInChildren<RawImage>().texture = texture;
+                overlayItem.gameObject.SetActive(true);
+
+                overlayItem.GetComponentInChildren<AspectRatioFitter>().aspectRatio = (float)texture.width / (float)texture.height;
+
+                overlayItem.onClick.AddListener( delegate
+                    {
+                        SetOverlayPath(file);
+                    });
+            }
+        }
+    }
+
+    private Texture2D LoadTexture(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            byte[] fileData = File.ReadAllBytes(filePath);
+            Texture2D texture = new Texture2D(2, 2);
+            if (texture.LoadImage(fileData))
+            {
+                return texture;
+            }
+        }
+        return null;
+    }
+
+    public void SetOverlayPath(string path)
+    {
+        _overlayImagePath = path;
+        RequestPreview();
+    }
+
     private void RequestPreview()
     {
         Debug.Log(_width);
         Debug.Log(_height);
 
-        Context.Instance.ScreenShoter.GetPreview(SetPreview, _width, _height);
+        Context.Instance.ScreenShoter.GetPreview(SetPreview, _width, _height, _overlayImagePath);
     }
 
     private void SaveRender()
     {
-        Context.Instance.ScreenShoter.SaveRender(OnRenderFinish, _width, _height, _path, _progressSlider, _nameInput.text);
+        if (Context.Instance.ScreenShoter.renderCamera == null)
+        {
+            Context.Instance.UIDrawer.TintImageByTime(_selectCameraButton.image, Color.red, _selectCameraButton.image.color);
+            return;
+        }
+        Context.Instance.ScreenShoter.SaveRender(OnRenderFinish, _width, _height, _path, _progressSlider, _nameInput.text, _overlayImagePath);
     }
+
+    
 
     private void OnRenderFinish(Texture2D tex)
     {
@@ -122,6 +272,72 @@ public class ScreenShot_Window : WindowController
     private void SetPreview(Texture2D preview) 
     {
         _previewImage.texture = preview;
-        _previewFitter.aspectRatio = preview.width / preview.height;
+        _previewFitter.aspectRatio = (float)_width / (float)_height;
+
+        Debug.Log($"{_width} / {_height} = {_width / _height}");
+    }
+
+    // Приватные методы перемещения камеры
+
+    private void MoveRight()
+    {
+        if (parentTransform == null) return;
+        parentTransform.position += parentTransform.right * moveStep;
+    }
+
+    private void MoveLeft()
+    {
+        if (parentTransform == null) return;
+        parentTransform.position -= parentTransform.right * moveStep;
+    }
+
+    private void MoveUp()
+    {
+        if (parentTransform == null) return;
+        parentTransform.position += parentTransform.up * moveStep;
+    }
+
+    private void MoveDown()
+    {
+        if (parentTransform == null) return;
+        parentTransform.position -= parentTransform.up * moveStep;
+    }
+
+    private void MoveForward()
+    {
+        if (parentTransform == null) return;
+        parentTransform.position += parentTransform.forward * moveStep;
+    }
+
+    private void MoveBackward()
+    {
+        if (parentTransform == null) return;
+        parentTransform.position -= parentTransform.forward * moveStep;
+    }
+
+    // Приватные методы вращения родительского объекта
+
+    private void RotateRight()
+    {
+        if (parentTransform == null) return;
+        parentTransform.Rotate(Vector3.up, rotateStep, Space.World);
+    }
+
+    private void RotateLeft()
+    {
+        if (parentTransform == null) return;
+        parentTransform.Rotate(Vector3.up, -rotateStep, Space.World);
+    }
+
+    private void RotateUp()
+    {
+        if (parentTransform == null) return;
+        parentTransform.Rotate(Vector3.right, -rotateStep, Space.Self);
+    }
+
+    private void RotateDown()
+    {
+        if (parentTransform == null) return;
+        parentTransform.Rotate(Vector3.right, rotateStep, Space.Self);
     }
 }

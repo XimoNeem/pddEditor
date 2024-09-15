@@ -121,4 +121,33 @@ public static class PDDUtilities
             return false;
         }
     }
+
+    public static Texture2D LoadTextureFromFile(string path)
+    {
+        if (!File.Exists(path))
+        {
+            Context.Instance.Logger.LogWarning($"File does not exist: {path}");
+            return null;
+        }
+
+        try
+        {
+            byte[] fileData = File.ReadAllBytes(path);
+            Texture2D texture = new Texture2D(2, 2);
+            if (texture.LoadImage(fileData))
+            {
+                return texture;
+            }
+            else
+            {
+                Context.Instance.Logger.LogError($"Failed to load texture from file: {path}");
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            Context.Instance.Logger.LogError($"Error loading texture from file: {ex.Message}");
+            return null;
+        }
+    }
 }

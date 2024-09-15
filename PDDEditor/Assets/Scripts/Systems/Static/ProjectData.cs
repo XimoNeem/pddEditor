@@ -19,13 +19,18 @@ namespace PDDEditor
             public string Name;
             public string Path;
             public string PreviewURL;
+            public string CreatingDate;
+            public string LastEditDate;
         }
 
         [System.Serializable]
         public class PDDSceneData
         {
             public string Name;
+            public string CreatingDate;
+            public string LastEditDate;
             public List<PDDNodeData> ItemsList;
+            public List<PDDUtilData> UtilsList;
         }
     }
 
@@ -47,6 +52,14 @@ namespace PDDEditor
             public const string DebugLayer = "DebugLayer";
             public const string PopupWindow = "PopupWindow";
             public const string AssetsManager = "AssetsManager";
+            public const string TexturesPreview = "TexturesPreview";
+            public const string UtilityPicker = "UtilityPicker";
+            public const string InfoWindow = "InfoWindow";
+            public const string TexturePicker = "TexturePicker";
+            public const string MeasureWindow = "MeasureWindow";
+            public const string ActivationWindow = "ActivationWindow";
+            public const string Hierarchy = "Hierarchy";
+            public const string MainSettingsWindow = "MainSettingsWindow";
         }
 
         public class PopupElement
@@ -112,6 +125,13 @@ namespace PDDEditor
             Vegetation
         }
 
+        public enum UtilityType
+        {
+            None,
+            Camera,
+            Spline,
+        }
+
         public enum SettingType
         {
             Toggle,
@@ -156,7 +176,10 @@ namespace PDDEditor
             public const string PreviewImageName = "scene.png";
             public const string SceneDataName = "data.json";
             public const string AssetsPath = "/PDDAssets";
+            public const string TexturesPath = "/PDDTextures";
             public const string ScenesPath = "/PDDScenes";
+            public const string OverlayImagesPath = "Editor/OverlayImages";
+            public const string LogsPath = "PDDlogs.txt";
         }
     }
 
@@ -179,12 +202,35 @@ namespace PDDEditor
         [System.Serializable]
         public class PDDNodeData
         {
+            public string Name;
+            public string NodeID;
             public Vector3 Position;
             public Vector3 Rotation;
             public Vector3 Scale;
             public string AssetPath;
 
+            public PDDBaseSettings BaseSettings;
             public ToggleSetting[] ToggleSettings;
+            public ColorSetting[] ColorSettings;
+            public TransformGroupSetting[] PDDTransformInfo;
+            public EmmiterSetting[] EmmiterSettings;
+            public TextureSetting[] TextureSettings;
+            public TextSetting[] TextSettings;
+        }
+
+        [System.Serializable]
+        public class PDDUtilData
+        {
+            public string Name;
+            public string NodeID;
+            public Vector3 Position;
+            public Vector3 Rotation;
+            public Vector3 Scale;
+            public string AssetPath;
+
+            public ColorSetting[] ColorSettings;
+            public PDDBaseSettings BaseSettings;
+            public TransformGroupSetting[] TransformGroups;
         }
     }
 }

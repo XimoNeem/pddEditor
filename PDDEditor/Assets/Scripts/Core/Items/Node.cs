@@ -1,27 +1,29 @@
 using UnityEngine;
 
-public class Node : MonoBehaviour
+public class Node : PDDNode
 {
-    public string NodeName;
-    public int NodeID;
-    public PDDItem Item;
-
-    private void OnMouseDown()
+/*    public string NodeName;
+    public string NodeID;
+    public PDDModifiable Item;
+*/
+    public override void OnClick()
     {
-        FindObjectOfType<RuntimeHandle.RuntimeTransformHandle>().SetTarget(this.gameObject);
+        base.OnClick();
 
-        Context.Instance.EventManager.OnNodeSelected.Invoke(this);
-        Item.Set();
+        /*Context.Instance.EventManager.OnNodeSelected.Invoke(this);
+        Item.Set();*/
     }
 
-    private void OnMouseEnter()
+    public override void OnHover()
     {
-        Context.Instance.UIDrawer.ShowHint(NodeName);
+        base.OnHover();
+        //Context.Instance.UIDrawer.ShowHint(NodeName);
     }
 
-    private void OnMouseExit()
+    public override void OnHoverEnds()
     {
-        Context.Instance.UIDrawer.HideHint();
+        base.OnHoverEnds();
+        //Context.Instance.UIDrawer.HideHint();
     }
 
     public void ChangeModel(PDDItem item)

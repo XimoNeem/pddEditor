@@ -10,7 +10,7 @@ public class ColorSetting_Ticket : Ticket
     public TMP_Text NameText;
     public Button ColorButton;
 
-    public PDDItem Item;
+    public PDDModifiable Item;
     public int ColorSettingID;
 
 

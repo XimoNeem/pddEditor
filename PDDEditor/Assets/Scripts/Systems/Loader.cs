@@ -20,6 +20,7 @@ public class Loader : MonoBehaviour
 
         Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.DebugLayer);
         Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.MainMenu);
+        Context.Instance.UIDrawer.ShowWindow(PDDEditorWindows.ActivationWindow);
 
 
         Context.Instance.Logger.Log("Loader destroyed");

@@ -7,10 +7,12 @@ using PDDEditor.Types;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using PDDEditor.Assets;
+using System.Linq;
 
 public class ItemsList_Window : WindowController
 {
     [SerializeField] private TMP_Dropdown _typeDropdown;
+    [SerializeField] private TMP_InputField _searchInput;
     [SerializeField] private Transform _contentParent;
 
     [SerializeField] private ObjectItem_Ticket _ticket;
@@ -23,6 +25,7 @@ public class ItemsList_Window : WindowController
         
         Context.Instance.UIDrawer.InitTypesDropdown(_typeDropdown);
 
+        _searchInput.onValueChanged.AddListener(delegate { RefreshList(_typeDropdown.value); });
         _typeDropdown.onValueChanged.AddListener(RefreshList);
         Context.Instance.EventManager.OnItemSelected.AddListener(delegate { AssetContainer.Unload(); });
     }
@@ -63,11 +66,12 @@ public class ItemsList_Window : WindowController
 
     private IEnumerator AddItems(string type)
     {
-        yield return new WaitForEndOfFrame();
+        List<PDDAssetData> items = Context.Instance.AssetRegister.GetAssets(type);
 
-        PDDAssetData[] items = Context.Instance.AssetRegister.GetAssets(type);
-
-        Debug.Log(items);
+        if (!string.IsNullOrEmpty(_searchInput.text))
+        {
+            items = items.Where(item => item.Name.ToLower().Contains(_searchInput.text.ToLower())).ToList();
+        }
 
         foreach (PDDAssetData item in items)
         {
@@ -75,7 +79,10 @@ public class ItemsList_Window : WindowController
             ticket.Name = item.Name;
             ticket.AssetPath = item.Path;
             ticket.OnSelectedAction = _cachedAction;
+            ticket.PreviewImage.texture = PDDUtilities.LoadTextureFromFile(item.ImagePath);
             ticket.Initialize();
+            ticket.CreateButton.onClick.AddListener(this.AssetContainer.Unload);
+            yield return new WaitForEndOfFrame();
         }
     }
 }

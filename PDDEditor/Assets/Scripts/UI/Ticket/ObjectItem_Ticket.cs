@@ -12,23 +12,23 @@ public class ObjectItem_Ticket : Ticket
     public Texture2D Preview;
     public Action<string> OnSelectedAction;
 
-    [SerializeField] private Image _preview;
-    [SerializeField] private Button _button;
-    [SerializeField] private TMP_Text _name;
+    public RawImage PreviewImage;
+    public Button CreateButton;
+    public TMP_Text NameText;
 
     public override void Initialize()
     {
-        _name.text = Name;
+        NameText.text = Name;
     }
 
     private void OnEnable()
     {
-        _button.onClick.AddListener(OnSelect);
+        CreateButton.onClick.AddListener(OnSelect);
     }
 
     private void OnDisable()
     {
-        _button.onClick.RemoveAllListeners();
+        CreateButton.onClick.RemoveAllListeners();
     }
 
     private void OnSelect()

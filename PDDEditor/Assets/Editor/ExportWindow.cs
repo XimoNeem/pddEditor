@@ -42,6 +42,7 @@ public class ExportWindow : EditorWindow
             if (_exportPrefab != null && !string.IsNullOrEmpty(_exportPath) && !string.IsNullOrEmpty(_exportFileName))
             {
                 AssetImporter importer = AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(_exportPrefab));
+                Debug.Log(importer.ToString());
                 importer.SetAssetBundleNameAndVariant(_exportFileName, "");
 
                 string fullExportPath = Path.Combine(_exportPath, _exportFileName);

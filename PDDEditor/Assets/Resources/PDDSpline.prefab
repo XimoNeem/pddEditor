@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2843046275087471028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2511566964981980324}
+  - component: {fileID: 725258479359560185}
+  m_Layer: 0
+  m_Name: PDDSpline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2511566964981980324
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843046275087471028}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &725258479359560185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843046275087471028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1281f040d11d14a85306aa3d28ad32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Spline
+  AssetPath: PDDSpline
+  PDDBaseSettings:
+    Locked: 0
+    Animated: 0
+    Movable: 0
+    MoveLoop: 0
+    AnimationSpeed: 1
+    MoveSpeed: 1
+    SplinePosition: 0.5
+    LinkedSpline: 
+  ToggleSettings: []
+  ColorSettings:
+  - name: "\u0426\u0432\u0435\u0442 \u0441\u043F\u043B\u0430\u0439\u043D\u0430"
+    Value: {r: 0.2917853, g: 0.639467, b: 0.745283, a: 1}
+    ToggledObjects: []
+  PDDTransformInfo:
+  - name: "\u0422\u043E\u0447\u043A\u0438"
+    Value:
+    - Position: {x: 0, y: 0, z: 0}
+      LeftHandle: {x: 1, y: 0, z: 0}
+      RightHandle: {x: -1, y: 0, z: 0}
+    - Position: {x: 10, y: 0, z: 0}
+      LeftHandle: {x: 11, y: 0, z: 0}
+      RightHandle: {x: 9, y: 0, z: 0}
+    - Position: {x: 20, y: 0, z: 0}
+      LeftHandle: {x: 21, y: 0, z: 0}
+      RightHandle: {x: 19, y: 0, z: 0}
+  EmmiterSettings: []
+  Type: 2

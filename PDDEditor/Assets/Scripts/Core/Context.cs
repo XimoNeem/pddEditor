@@ -16,6 +16,9 @@ public class Context : MonoBehaviour
     public DebugSystem Logger;
     public PDDEditorContainer EditorBase;
     public AssetRegister AssetRegister;
+    public RunTimeSystem RunTimeSystem;
+    public NativeWindowsUtility WindowsUtility;
+    public UnityMainThreadDispatcher MainThreadDispatcher;
 
     //public PDDUtilities Utilities;
 
@@ -41,6 +44,9 @@ public class Context : MonoBehaviour
         AssetLoader = this.AddComponent<LocalAssetLoader>();
         LevelSystem = this.AddComponent<LevelSystem>();
         AssetRegister = this.AddComponent<AssetRegister>();
+        RunTimeSystem = this.AddComponent<RunTimeSystem>();
+        WindowsUtility = this.AddComponent<NativeWindowsUtility>();
+        MainThreadDispatcher = this.AddComponent<UnityMainThreadDispatcher>();
 
         Context.Instance.Logger.Log("Context initialized");
 
